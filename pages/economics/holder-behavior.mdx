@@ -1,0 +1,195 @@
+# Holder Behavior Modeling
+
+import { StrategyHeatmap } from "../../components/StrategyHeatmap";
+
+This page models how economically rational participants might behave given a cobuild's mechanism design—choosing between **redeeming**, **holding**, or **borrowing** based on network outcomes.
+
+## Three Available Actions
+
+At any time, a holder with `q` tokens has three options:
+
+**1. Redeem**
+
+Burn tokens for a share of the treasury (paying the cash-out tax) or sell on an AMM at market price (which arbitrage keeps between floor and ceiling).
+
+**2. Hold**
+
+Take no action and remain exposed to future changes in floor / AMM price.
+
+**3. Borrow**
+
+Burn tokens as collateral, borrow less than their cash-out value, and optionally repay later to remint. Because loans are priced off the same convex redemption curve, they are always over-collateralized; the system remains solvent even if all loans default.
+
+The stage parameters determine which action is individually rational under different scenarios.
+
+## Immediate Liquidity Needs
+
+First, consider a purely **myopic** scenario where future expectations are ignored. A participant simply asks:
+
+> "I need liquidity now. Should I redeem or borrow?"
+
+The relevant variables are:
+
+- **Cash-out tax** `rₖ`
+- **Net loan proceeds factor** `a` (what % of collateral's cash-out value is received after fees)
+- **Position size as fraction of supply** `x = q / S`
+
+### Redemption vs Borrowing
+
+When cash-out tax is below ~39%, redeeming yields more immediate liquidity than borrowing. Most cobuilds use 10–20% tax, so in practice: **for immediate liquidity needs, redemption dominates.**
+
+Only at very high taxes (40%+) does borrowing begin to compete for large holders seeking immediate liquidity.
+
+## Forward-Looking Scenarios
+
+Now consider participants who account for expected outcomes between **time `t₀`** and **future time `t₁`**.
+
+Three variables matter:
+
+- **External opportunity cost `R`** — alternative yield available elsewhere (DeFi, treasuries, etc.)
+- **Expected token appreciation** — floor / AMM price growth between `t₀` and `t₁`
+- **Loan fee level `a`** — net proceeds as fraction of collateral value
+
+We model three outcome scenarios:
+
+1. **Unsuccessful network** — token underperforms alternatives
+2. **Moderate success** — steady but modest appreciation
+3. **Strong success** — sustained compounding over years
+
+## Unsuccessful Network Scenario
+
+In this model, participants believe:
+
+- "Alternative opportunities outperform this token."
+
+Formally, redemption beats holding when:
+
+```text
+(1 + R) > P_sell(t₁, q) / P_sell(t₀, q)
+```
+
+In this scenario:
+
+- **Redemption dominates holding** — If expected token appreciation is worse than external yield, rational behavior is to redeem and reallocate.
+
+- **Borrowing vs holding** — For participants who want to maintain some exposure while reallocating capital, borrowing only beats holding if external return `R` clears the fee threshold:
+
+  ```text
+  R > (1 − a) / a
+  ```
+
+  With default loan parameters:
+  - **6-month loan (`a ≈ 0.94`)** — Requires ~6% return over 6 months (~12% annualized)
+  - **10-year loan (`a ≈ 0.63`)** — Requires ~60% total return over 10 years (~5–6% annualized)
+
+In an unsuccessful network model:
+
+> **Most rational participants redeem.**
+> Borrowing only makes sense if external yield is genuinely attractive _and_ the participant wants to maintain some token exposure.
+
+## Moderate Success Scenario
+
+Assume the network performs adequately:
+
+- Floor / AMM price drifts up over time
+- But not by large multiples
+
+With **minimal external yield** (`R ≈ 0`), the key comparison is **borrowing vs redemption**.
+
+With no external yield, borrowing only makes sense if expected token appreciation beats the loan fee.
+
+For typical parameters:
+
+- **6-month loan (`a ≈ 0.94`)** — Requires ~6% floor / price growth in 6 months (~11–12% annualized)
+
+- **10-year loan (`a ≈ 0.63`)** — Requires ~37% total floor growth over 10 years (~3–4% annualized)
+
+In a moderate success model where floor growth of ~4–5% annually seems plausible:
+
+- **Holding** is rational over redeeming
+- **10-year loans** become viable: slow but steady growth covers the loan fee, and borrowed capital can be deployed elsewhere
+
+If expected growth is below ~3% annually:
+
+- **Holding** may still be rational for those who value the exposure
+- **Loans add little value** unless external yield `R` is non-trivial
+
+## Strong Success Scenario
+
+This models a network that achieves product-market fit: real revenue and a floor that compounds over years.
+
+### Redemption vs Holding
+
+Holding beats redemption when expected appreciation exceeds external opportunity cost:
+
+```text
+Hold beats Redeem when:
+P_sell(t₁, q) / P_sell(t₀, q) > (1 + R)
+```
+
+In this regime, optimistic participants hold or acquire more. Redemption is for those who believe they can do better elsewhere.
+
+### Loan Thresholds
+
+Two thresholds emerge:
+
+- **Borrowing vs Holding**
+
+  For participants maintaining exposure either way, borrowing beats simply holding when external return on borrowed capital clears:
+
+  ```text
+  R > (1 − a) / a
+  ```
+
+  For a 10-year window (`a ≈ 0.63`), that's the **~60% total over 10 years (~5–6%/yr)** threshold. Once external yield beats that, **"hold + borrow"** strictly dominates **"just hold"**.
+
+- **Borrowing vs Redemption (with `R ≈ 0`)**
+
+  If external opportunities are limited and loans are mainly used to access liquidity sooner, the relevant condition is that token appreciation beats the fee: roughly **~37% total over 10 years (~3–4%/yr)** for long-dated loans.
+
+In other words:
+
+- If token growth of **~1.4× over 10 years** (~3–4% annualized) seems plausible, long-dated loans are individually rational vs immediate redemption.
+- If external yield of **~5–6% annually** is achievable, loans become compelling vs just holding—participants keep exposure _and_ earn yield on borrowed capital.
+
+Both conditions can easily hold in a successful network, so rational behavior in this scenario is:
+
+- **Don't redeem**
+- **Do hold**
+- **Use loans opportunistically** when good external opportunities or liquidity needs arise
+
+## Parameter Effects
+
+<StrategyHeatmap />
+
+Stage parameters don't just change the math—they also signal what _kind_ of behavior the network is designed for.
+
+### Cash-out Tax
+
+| Tax Range            | Behavioral Signal                                                                                                                               |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Low (~0–10%)**     | "If you're bearish or need liquidity, you can leave cheaply." Expect more **redemptions**, less loan usage, more trading & churn.               |
+| **Medium (~10–20%)** | Balanced regime: redemption is still viable, loans are usable, and each redemption pushes the floor up meaningfully.                            |
+| **High (≳20–40%+)**  | You're heavily penalizing redemption. Large rational holders are nudged toward **loans** over redemptions for liquidity, especially short-term. |
+
+Higher cash-out taxes discourage immediate redemption, but also require stronger long-term growth to make loans worthwhile versus just leaving.
+
+### Issuance Growth
+
+- Faster issuance cuts (steeper ceiling) create more growth potential and make **holding + borrowing** more attractive if the network succeeds.
+- But if the ceiling outruns reality for too long, you enter the **"runaway" regime**:
+  - new issuance effectively stops
+  - inbound flows mostly route through the AMM
+  - AMM liquidity can thin out if demand is mostly speculative
+
+Calibrating the ceiling so it roughly tracks plausible long-term demand is key to avoiding multi-year runaway.
+
+## Summary
+
+Parameter choices implicitly select for certain behavioral patterns:
+
+- **High uncertainty and churn expected** → tilt toward **lower cash-out tax**, accept more redemptions, and lean on floor mechanics to reward those who stay.
+- **Strong long-term growth expected** → design for:
+  - a **modest-high cash-out tax** (to reward stayers and enable loans)
+  - an issuance schedule that doesn't outpace realistic demand (to avoid runaway)
+  - clear UX around loans as the primary liquidity mechanism that preserves exposure

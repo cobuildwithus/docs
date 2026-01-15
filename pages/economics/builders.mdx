@@ -1,0 +1,214 @@
+import { BuilderFloorEffect } from "../../components/BuilderFloorEffect";
+
+# Builders Payouts [Ways to get working capital]
+
+_Hold vs Sell vs Cash-out vs Loan - for long-term contributors_
+
+This page covers **what's rational for builders** to do with their split share once the cobuild is live, assuming:
+
+- High conviction over a 5-10 year horizon
+- A meaningful split (often 10-40% of supply early on)
+
+**TL;DR**
+
+- If you believe the cobuild will grow over years, your default is:  
+  **hold most of your split, use loans for working capital, and sell only when you consciously want to reduce exposure.**
+- Cash-outs are a clean way to exit but remove treasury; loans give you liquidity _and_ support the floor.
+- Occasional AMM sells are fine for liquidity needs; just don't turn your founder stack into a constant sell wall.
+
+## Your Split
+
+Your split is not "free tokens." Each token is:
+
+- **Tied to treasury assets** via a redemption mechanism<sup>[4]</sup>
+- A **source of borrowing power**, because loans are priced off that same curve and are designed to be over-collateralized
+
+What you do with those tokens feeds back into everyone else's position:
+
+- **Cash-outs (redemptions)**
+  - Burn your tokens
+  - Pay you from the treasury
+  - Designed to _increase_ the floor price for remaining holders, because supply falls faster than the treasury
+
+- **Loans**
+  - Burn your collateral at origination
+  - Lend you _less_ than you'd get from redeeming
+  - Also _increase_ the floor at origination (same mechanics as a discounted cash-out, plus loan fees)
+
+- **AMM sells**
+  - Do **not** touch the treasury at all
+  - Just move tokens from you to someone else inside the corridor between floor and ceiling
+  - Floor and treasury stay unchanged
+
+So you're always trading off:
+
+> **Personal liquidity now** vs **future upside + network health**.
+
+## Basic Moves
+
+With split tokens you can:
+
+### Hold
+
+Do nothing. You stay fully exposed to:
+
+- Rising issuance price (ceiling)
+- Activity-driven floor growth from other people's issuances, cash-outs, and loans
+
+Good if:
+
+- You don't need cash right now
+- You're maximally bullish and happy being "all-in" on upside
+
+### Cash-out
+
+Burn tokens and withdraw base asset at the bonding-curve price minus cash-out tax and protocol fees.
+
+- You receive slightly _less_ than the backing value per token
+- The tax stays in the treasury → designed to increase the floor for those who stay
+- When the tax is > 0, the mechanics are structured so that each cash-out can raise the per-token redemption value for remaining holders
+
+Use this when:
+
+- You **intentionally want to reduce exposure** (e.g. stepping back or leaving the project)
+- You're okay with "selling" some upside to reward remaining holders
+
+### AMM Sell
+
+Swap tokens at the current market price (between floor and ceiling).
+
+- No cash-out tax
+- Treasury & floor don't change
+- You just move tokens from "you" to "someone else"
+
+Best for:
+
+- **Small, periodic liquidity needs** (taxes, personal runway)
+- Situations where there's good AMM liquidity and you don't want to touch the treasury
+
+### Loan
+
+Use tokens as collateral to borrow from the treasury instead of exiting. See [Loans](/economics/loans) for full details on fee structure and costs.
+
+- Collateral is **burned** at origination
+- You can borrow up to ~63-95% of your cash-out value (depending on loan duration)
+- When you repay, collateral is **reminted** to you
+
+Intuition:
+
+> A loan is like selling your tokens at a discount now **with the option** to buy them back later at today's floor price, plus a fixed fee.
+
+## Default Strategy
+
+If you have 5-10 year conviction, the baseline play is:
+
+> **Hold most of your split; use loans to fund work and salary; sell rarely and deliberately.**
+
+From the math, a loan beats holding when you can deploy borrowed capital at a return that exceeds the loan fees — roughly **5-6%/yr** for long-term loans, **11-13%/yr** for short-term. See [Loans](/economics/loans) for the exact thresholds.
+
+## Founder Salary
+
+Suppose you're a founder with a big split and you just want to pay yourself a normal salary.
+
+### Option 1: Sell
+
+Pros:
+
+- You get full AMM/floor value today
+- No future obligation
+- Simple to reason about
+
+Cons:
+
+- You permanently reduce your future upside
+- If you sell heavily, you become your own sell pressure
+
+This is "classic equity sell-down": safe but de-levered.
+
+### Option 2: Loan
+
+Here you:
+
+- Borrow against a portion of your stack (say 10-30% of your split)
+- Use that to pay yourself over some years
+- Plan to repay from future revenue or occasional, smaller token sales
+
+Mentally, you're doing:
+
+> "I'm selling a chunk of my tokens at a discount **to my future self**, not to the market."
+
+Rational when:
+
+1. You expect the floor to grow steadily (a few % per year or more), and
+2. You're confident your future income (from the project or otherwise) can handle eventual repayment.
+
+If things go well:
+
+- Floor grows, your salary was funded, and you still own most of your original position at a much higher value.
+- The ~37-40% fee on a 10-year loan looks cheap in hindsight.
+
+If things go poorly:
+
+- Floor stagnates or falls
+- Repaying hurts, and defaulting effectively means "I sold those tokens years ago at ~60-65% of what I could have redeemed then"
+- System stays solvent; you just own less of it
+
+That's the real trade:
+
+> **Debt + more upside** vs **no debt + less upside**.
+
+### Option 3: Hybrid
+
+A very sane founder pattern:
+
+- Use **small, rolling loans** on a minority of your stack (10-30%)
+- Keep the rest unlevered
+- Re-assess annually: only roll or increase if floor growth and cashflow actually support it
+
+This keeps you:
+
+- Aligned for the long term
+- Liquid enough to live
+- Away from "all-in leveraged founder" risk
+
+## System Effects
+
+<BuilderFloorEffect />
+
+From the formal analysis, different actions affect the floor and treasury in predictable ways:
+
+- **Issuance (users buying from the cobuild)**
+  - Increases treasury and supply
+  - Increases the floor whenever issuance price > current backing per token
+
+- **Cash-outs (including yours)**
+  - Reduce both treasury and supply
+  - Designed to _increase_ the floor when there's a cash-out tax
+
+- **Loan originations**
+  - Reduce treasury and supply (collateral burned, funds lent out)
+  - Designed to _increase_ the floor due to over-collateralization and fees
+
+- **Loan repayments**
+  - Increase treasury and supply (collateral reminted)
+  - Slightly _reduce_ the floor vs the origination point, though the prepaid/time fees keep the full loan cycle net-positive for the system
+
+- **Auto-issuances**
+  - Increase supply with no treasury inflow
+  - Mechanically _decrease_ the floor and should be used sparingly
+
+Implication for builders:
+
+- **Best for network & you**: use loans for working capital, repay when the project is healthy.
+- **Neutral**: occasional AMM sells.
+- **Heavy early redemptions and big auto-issuances**: mechanically drag on the system and should be reserved for exceptional cases.
+
+## References
+
+[1] <a href="/revnet/Revnet-Whitepaper.pdf" target="_blank" className="vocs_Anchor vocs_Link vocs_Link_accent_underlined">Cryptoeconomics of Revnets</a> - formal analysis of issuance, redemption, loans, and rational holder behavior.
+
+[2] <a href="/revnet/Revnet-Dynamical-System.pdf" target="_blank" className="vocs_Anchor vocs_Link vocs_Link_accent_underlined">Revnet Value Flows as a Continuous-Time Dynamical System</a> - derivation of the floor dynamics and neutral line in terms of issuance/redemption rates.
+
+[3] <a href="/revnet/Revnet-Analysis.pdf" target="_blank" className="vocs_Anchor vocs_Link vocs_Link_accent_underlined">Revnet Analysis</a> - simulation results and archetype guidance (Launchpad, Stable-Commerce, Periodic Fundraising), including tax-regime and auto-issuance effects.
+
+[4]: The redemption mechanism allows holders to redeem tokens for a share of treasury assets, subject to contract terms, available liquidity, and protocol risk. Redemption is not guaranteed.

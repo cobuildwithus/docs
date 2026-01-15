@@ -1,0 +1,22 @@
+@import "tailwindcss";
+@source "./components/**/*.tsx";
+@source "./pages/**/*.mdx";
+
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 100 800;
+  font-display: swap;
+  src: url("/fonts/jetbrains-mono.woff2") format("woff2");
+}
+
+:root {
+  --vocs-fontFamily_default:
+    "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+@layer utilities {
+  .bg-demo-dark {
+    background-color: #0a0a0a;
+  }
+}

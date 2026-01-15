@@ -1,0 +1,103 @@
+import { MintFlowDiagram } from "../../components/MintFlowDiagram";
+import { CashOutTaxCurve } from "../../components/CashOutTaxCurve";
+import { AutoIssuanceDiagram } from "../../components/AutoIssuanceDiagram";
+
+# Issuance & Redemption Mechanics
+
+This page documents the protocol mechanics for token distribution and redemption parameters.
+
+<MintFlowDiagram />
+
+## Split %
+
+Each time someone pays into the curve, the protocol mints new tokens and splits them:
+
+- A fraction routes to a predefined list of recipients (team, partners, other contracts).
+- The remainder routes to the payer.
+
+Properties:
+
+- Splits **do not change the treasury**—they only affect _who_ receives the new tokens.
+- From the payer's perspective, a higher split is equivalent to a higher effective price.
+- Splits do **not** affect whether the price floor rises from an issuance—that depends on whether the issuance price exceeds the current backing ratio.
+
+### Split Ranges
+
+**Low split (5–20%)**
+
+- Most new tokens route to payers → broad distribution.
+- Common in Launchpad-style or community-first configurations.
+
+**Moderate split (40–50%)**
+
+- Payers and existing stakeholders both receive significant shares on each payment.
+- Typical for periodic funding configurations where each round both funds the treasury and allocates to incumbents.
+
+**High split (95–98%)**
+
+- Nearly all new tokens route to the operator.
+- Payers receive small cashback-style amounts; suitable for loyalty programs and commerce.
+
+Design considerations:
+
+- Splits fund **ongoing work** (salaries, development, operations).
+- Predictable splits ("team receives 30% of all new tokens, forever") are easier to model.
+
+## Auto-issuance
+
+Auto-issuance (automint) schedules one-off token mints at stage start. These mints:
+
+- Increase **supply** without adding to the **treasury**.
+- Therefore **always reduce the price floor**, because `floor ≈ treasury ÷ supply` and only the denominator changes.
+
+<AutoIssuanceDiagram />
+
+### Use Cases
+
+**Common reasons:**
+
+- Compensate pre-launch contributors who took early risk.
+- Allocate to strategic partners or infrastructure providers.
+
+**Design considerations:**
+
+- Keep auto-issuance **minimal** relative to expected future supply.
+- Earlier issuance (before significant participation) reduces floor impact on existing holders.
+- In multi-stage configurations, scheduling auto-issuance **after** periods of activity gives the floor headroom to absorb dilution.
+
+Framing: **splits for ongoing work; auto-issuance for prior contributions**.
+
+## Cash-out Tax
+
+When someone redeems tokens, the curve calculates a payout based on `treasury ÷ supply`, then applies a **cash-out tax**. A fraction stays in the treasury; the rest goes to the redeemer.
+
+Key property: **Every redemption raises the price floor** as long as the tax is &gt;&nbsp;0. Treasury decreases, but supply decreases _faster_, because some of the payout remains inside.
+
+Higher tax = stronger floor lift per redemption, but higher cost to redeem.
+
+<CashOutTaxCurve />
+
+### Low (0–8%)
+
+- Redemptions are inexpensive; tokens function more like a currency.
+- Suitable for **Stable Commerce** configurations where participants need to move in and out freely.
+- The floor still increases over time through activity, but more gradually.
+
+### Medium (8–20%)
+
+- Each redemption meaningfully benefits remaining holders.
+- Loans remain viable for many configurations.
+- Suitable for **Periodic Fundraising** systems—participants can remain between rounds but retain the ability to leave.
+
+### High (20–40%+)
+
+- Redemptions become costly; the mechanism favors longer-term holding.
+- In Launchpad simulations, tax ≥20% improved capital preservation and floor growth.
+- Above ~40%, an interesting property emerges: for large holders, **loans can provide more immediate liquidity than redemption**. The system remains solvent (defaults actually strengthen the floor), but loans become an alternative liquidity path.
+
+## Tax and Loan Interactions
+
+Loans are not configured directly, but their properties depend on tax and ceiling parameters:
+
+- **Higher tax** accelerates floor growth for remaining holders, but raises the appreciation threshold needed for loans to be preferable over redemption.
+- **Growing ceiling** gives holders reason to borrow instead of redeem, as future price increases may outpace the loan's cost.

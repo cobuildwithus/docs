@@ -1,0 +1,36 @@
+import { CashOutFloorChart } from "../../components/CashOutFloorChart";
+import { AMMBandChart } from "../../components/AMMBandChart";
+
+# Cash-out floor [Onchain redemption mechanism]
+
+## Unlimited downside
+
+Traditional token launches also share a darker feature: there is no built‑in way to get your money back from the thing you funded.
+Once you buy a token, your fate is in the hands of secondary markets and large holders; if they decide to leave, the price can blast to zero.
+
+Cobuild takes a different approach.
+
+## Cobuild token floor
+
+<CashOutFloorChart />
+
+Every token comes with a cash‑out floor: at any time you can return tokens and receive a slice of the assets sitting in the token's treasury.[^1]
+
+When cashing out, you pay a small fee that stays in the treasury.
+You get slightly less than the pro‑rata share and the remainder is left behind. Under normal operation, redemptions are structured so that, when the contract works as intended, they can increase the redemption value for remaining holders.
+
+The design aims to provide a mechanism for partial downside protection by tying redemption value to treasury assets. However, token prices can still fall significantly, and there is no guarantee you will be able to redeem at any specific price or time beyond the cash-out floor.
+
+## AMMs
+
+<AMMBandChart />
+
+AMMs trade freely between the mint price and the floor. The core mechanics are designed to work as follows:
+
+The issuance schedule prices earlier mints lower than later mints.
+Every token has a built‑in mechanism to redeem against treasury assets.
+And as real revenues accrue, the redemption value is designed to increase.
+
+Cobuild tokens wrap these mechanics so communities can focus on building culture and products while the underlying system aims to keep the funding game fair.
+
+[^1]: Cobuild tokens are designed with an onchain redemption mechanism that lets holders redeem tokens for a share of treasury assets, subject to contract terms, available liquidity, and protocol risk.

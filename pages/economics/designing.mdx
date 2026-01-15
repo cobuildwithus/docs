@@ -1,0 +1,28 @@
+import { PriceCorridorChart } from "../../components/PriceCorridorChart";
+
+# Designing a Cobuild
+
+When you launch a cobuild, you lock in a small set of rules that define how money and tokens move forever. Those rules live in _stages_-time windows with fixed settings. Within each stage, you choose five main levers:
+
+1. **Stage cadence** - How often the rules change (length and number of stages).
+2. **Issuance curve** - How the token's issuance price rises over time.
+3. **Split %** - What share of newly minted tokens goes to preset recipients (team, partners, other contracts) vs the buyer.
+4. **Auto-issuance** - One-time token mints that happen automatically at stage start.
+5. **Cash-out tax** - The % fee paid when someone redeems tokens for treasury assets.
+
+## The price corridor
+
+Under the hood, these parameters interact with two mechanical facts:
+
+- **Ceiling**: the current issuance price (plus splits). Nobody pays more than they can mint for.
+- **Floor**: the redemption value, roughly `treasury ÷ supply`, adjusted by protocol fees and the cash-out tax.
+
+Every issuance, redemption, loan, or auto-issuance moves either the treasury or the supply, which nudges that floor up or down.
+
+<PriceCorridorChart />
+
+Think of this as "write once, run forever." There's no governance switch to fix a misconfigured curve later. Picking parameters is about picking **incentives**:
+
+- **Urgency vs accessibility** - Is this a rush-to-get-in launch, or an open, calm system?
+- **Builder funding vs community allocation** - How much supply funnels to the team vs buyers?
+- **Liquidity vs loyalty** - Do you make it cheap to exit, or reward people who stick around?

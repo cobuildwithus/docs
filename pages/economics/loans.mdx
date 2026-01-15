@@ -1,0 +1,158 @@
+# Loans
+
+Cobuild loans don't have a floating APR. They're **fixed-fee loans with a tunable fee-free window and a hard 10-year limit**.
+
+The upfront payment (the **source fee**) is configurable. It determines the **interest-free period**. After that period, an additional time-based source fee ramps up until a cap, and after 10 years the loan can no longer be repaid (it's administratively liquidated).
+
+## How It Works
+
+High-level:
+
+- Tokens are used as collateral to borrow the base asset from the treasury **instead of** cashing out.
+- The collateral is **burned at origination**.
+- The **maximum borrowable amount before fees** is the **cash-out value** of that collateral on the bonding curve.
+- After protocol / REV / source fees, the participant receives a percentage of the cash-out value:
+  - **Short window (~6 months)** → ~94%
+  - **Max window (10 years)** → ~63%
+
+So the participant is effectively accessing liquidity at a **discount to the cash-out value**, with the option to restore their position later by repaying the loan.
+
+On repayment:
+
+- The participant chooses how much collateral to restore.
+- That fraction of the original collateral is **reminted**, and the loan obligation shrinks accordingly.
+- Full repayment before the 10-year deadline restores all collateral.
+- After 10 years, the loan can be liquidated: accounting is updated, collateral remains burned, and the treasury stays solvent.
+
+**Intuition:**
+
+A loan ≈ _"access liquidity at a discount today, while preserving the option to restore the original token balance later at (roughly) today's floor price, plus a fixed fee."_
+
+## Fee Layers
+
+When a loan is originated, three fees are deducted from the loan amount immediately:
+
+| Fee type         | Approx %                          | Paid to          |
+| ---------------- | --------------------------------- | ---------------- |
+| **Protocol fee** | ≈ **2.4%**                        | $NANA / Juicebox |
+| **REV fee**      | ≈ **1.0%**                        | $REV revnet      |
+| **Source fee**   | ≈ **2.4% – 33.3%** (configurable) | The cobuild      |
+
+After fees, the participant receives:
+
+- **Short window (~6 months)** → ~94% of the cash-out value
+- **Max window (10 years)** → ~63% of the cash-out value
+
+**Minimum upfront cost (6-month config):**
+
+- Protocol + REV + smallest source fee
+- ≈ 2.4% + 1.0% + 2.4% ≈ **5.9% of the amount borrowed**
+
+## Prepaid Duration
+
+The chosen **source fee** determines the **fee-free repayment window**:
+
+| Source fee | Fee-free window |
+| ---------- | --------------- |
+| ~2.4%      | ~6 months       |
+| ~5%        | ~1 year         |
+| ~9%        | ~2 years        |
+| ~20%       | ~5 years        |
+| ~33%       | ~10 years       |
+
+**After the prepaid window ends:**
+
+- A **time-based source fee** starts accruing.
+- It ramps up smoothly from 0 and, at the 10-year limit, can add **up to ~50% of the _un-prepaid_ portion** of the loan as extra source fee.
+- For typical configurations, **total source fees over 10 years fall in the 50–65% of principal range**, depending on the initial prepayment amount.
+
+There is **no compounding APR**. The structure is:
+
+> upfront % → X years of "no additional interest" → after that a growing late fee accrues, capped by the 10-year limit.
+
+## Cost by Horizon
+
+A property of the fee formulas:
+
+**For a given repayment horizon T, the minimum-cost configuration is always "prepay exactly T years".** Under-prepaying and repaying late is strictly more expensive.
+
+Key horizons, assuming repayment by the end of the prepaid window:
+
+### 5-Year Loan
+
+- ~**20% source fee** → **5-year** fee-free window.
+- Total one-time cost (protocol + REV + source):
+  ≈ 2.4% + 1.0% + 20% ≈ **23–24% of the amount borrowed**.
+- Simple average over 5 years: **~4.7%/yr** (non-compounding).
+
+### 10-Year Loan
+
+- ~**33% source fee** → **10-year** fee-free window.
+- Total one-time cost (protocol + REV + source):
+  ≈ 2.4% + 1.0% + 33.3% ≈ **~36–37% of the amount borrowed**.
+- Simple average over 10 years: **~3.7%/yr**.
+
+### Under-Prepaying
+
+Example: a **6-month** prepay (~2.4% source fee) with actual repayment **5 years** later:
+
+- Total cost on that 5-year horizon ≈ **37% of principal**
+  (vs ~23–24% with a 5-year prepay).
+- Simple average: **~7.4%/yr**.
+
+A 6-month prepay extended to the **10-year limit** results in ≈ **55% total cost** of principal.
+
+The mechanism is designed such that:
+
+> Matching the prepaid window to the actual repayment horizon minimizes total fees. Under-prepaying and repaying late always costs more in total percentage terms.
+
+## Loan Use Cases
+
+The loan mechanism serves several practical purposes:
+
+- **Working capital**: Builders who need liquidity for operations without permanently reducing their position.
+- **Bridging timing gaps**: When a participant expects future income but needs funds now.
+- **Maintaining alignment**: Accessing liquidity while preserving the option to restore one's original token balance later.
+
+The fixed-fee structure makes costs predictable—participants know the total cost at origination rather than facing variable rate uncertainty.
+
+## 10-Year Mechanism Properties
+
+With the max-prepay 10-year configuration:
+
+- The participant pays **~36–37% of the cash-out value** of their collateral as a one-time fee, in exchange for **10 years of liquidity**.
+- The mechanism preserves:
+  - The option to restore the original token balance at any point before the deadline.
+  - The repayment amount is fixed at origination—it does not change if the floor moves.
+
+This design allows long-duration liquidity access while keeping costs bounded and predictable.
+
+## Rolling Loans
+
+Participants **can refinance**, but **cannot reuse the same collateral twice**:
+
+- Collateral is burned and tied to a specific loan until repayment or default.
+- To open a new loan:
+  - Repay the existing loan,
+  - Collateral is reminted,
+  - A new loan can then be opened at the current floor.
+
+Each cycle:
+
+- Incurs a fresh set of fees.
+- Reduces the participant's net token position over time.
+
+The **loan → repay → loan** pattern allows participants to access liquidity across multiple periods while maintaining their token balance.
+
+## TL;DR
+
+- No floating APR; a **front-loaded fee** determines the **fee-free repayment window (up to 10 years)**.
+- Protocol + REV fees total **~3.4%** on top of the chosen source fee.
+- When **prepay matches horizon and repayment is on time**:
+  - ~6-month: **~6%** total cost.
+  - **5-year**: **~23–24%** total (~4.7%/yr simple).
+  - **10-year**: **~36–37%** total (~3.7%/yr simple).
+- **Under-prepaying with late repayment** increases total cost (e.g. 6-month prepay with 5-year repay → ~37% total; 6-month prepay extended to 10 years → ~55% total).
+- **No compounding interest** and no unbounded debt growth; everything is bounded by the 10-year design.
+
+All percentages are of the **amount borrowed** and exclude gas and token price volatility; rounded for clarity, but the structure matches the cobuild math.

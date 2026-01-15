@@ -1,0 +1,118 @@
+import { IssuanceCurvesChart } from "../../components/IssuanceCurvesChart";
+import { ClosingIssuanceChart } from "../../components/ClosingIssuanceChart";
+import { CurveTypeChart } from "../../components/CurveTypeChart";
+
+# Stage Cadence & Issuance Curve
+
+This page is about shaping the **ceiling**: the price users pay to mint new tokens over time.
+
+Inside each stage you configure:
+
+1. **Stage duration** - how long this stage's rules last.
+2. **Initial issuance price** - starting price at the beginning of the stage.
+3. **Issuance cut %** - how much issuance per dollar falls each step (equivalently, how much price rises).
+4. **Issuance cut frequency** - how often you apply that cut (daily, weekly, monthly…).
+
+The contract treats the issuance price as a step function: it stays flat within each interval and jumps up by a fixed factor on a fixed schedule. The result is a time-rising ceiling that doesn't care what the market does.
+
+<IssuanceCurvesChart />
+
+## What the curve controls
+
+Your issuance curve sets:
+
+1. **Urgency** - how much it feels like "get in now or pay way more later."
+2. **Accessibility** - how expensive it will be for people who discover you late.
+3. **Treasury growth pattern** - front-loaded in a sharp curve vs spread out in a gentle one.
+4. **Runaway risk** - whether the ceiling can outrun the market price so much that primary issuance basically shuts off.
+
+## Steep curve (high cut%, short interval)
+
+<CurveTypeChart type="steep" />
+
+**Why you'd choose it:**
+
+- You want a high-energy token launch with strong FOMO.
+- You expect most of the capital to arrive in a short window.
+
+**What it does:**
+
+- Weekly or daily jumps (+20-30%/week) mean early buyers pay dramatically less than late ones.
+- Treasury grows extremely fast while issuance is active.
+
+**Tradeoffs:**
+
+- Latecomers can feel "too late" after just a few jumps.
+- If the secondary market price can't keep up with your ceiling, you hit a **runaway** regime: buyers stop minting from the contract and just trade on the AMM instead, so treasury growth stalls.
+
+## Gentle curve (low cut%, longer interval)
+
+<CurveTypeChart type="gentle" />
+
+**Why you'd choose it:**
+
+- You want calm, recurring participation (subscriptions, SaaS, commerce).
+- You want late users to still feel early-ish.
+
+**What it does:**
+
+- Small, infrequent jumps (≈3% per quarter) keep ceiling and floor very close together.
+- The token behaves more like a revenue-backed currency than a speculative asset.
+
+**Tradeoffs:**
+
+- Less event-driven hype.
+- If growth is too flat, rational users will just cash out instead of borrowing against tokens, because there's no expected appreciation to justify loans. Commerce-style cobuilds need roughly **≥3% per quarter** issuance growth to keep loans attractive.
+
+## Stepwise curve (big jumps between stages)
+
+<CurveTypeChart type="stepwise" />
+
+**Why you'd choose it:**
+
+- You want regular fundraising "rounds", seasons, or milestones.
+- You want marketing windows where people know "next month the price jumps 50%".
+
+**What it does:**
+
+- Within a stage, price is flat; at the boundary, it jumps +40-50%.
+- Each stage becomes a mini-launch with its own story and metrics.
+
+**Tradeoffs:**
+
+- Floor tends to follow a "sawtooth": each new round pushes the ceiling up, and activity in the round pulls the floor up toward it.
+- Requires you to actually deliver something each round to justify the step.
+
+Use this for **Periodic Fundraising** cobuilds.
+
+## Closing issuance
+
+You can configure a cobuild to **fully stop minting new tokens** after a certain date by adding a final stage with issuance disabled. Once this stage begins, no new tokens can be minted from the contract-ever.
+
+<ClosingIssuanceChart />
+
+**Why you'd do it:**
+
+- Create a fixed supply cap after an initial distribution period.
+- Signal commitment: "this is all there will ever be."
+- Shift focus from primary issuance to secondary trading and cash-outs.
+
+**How it works:**
+
+Set up your active issuance stage(s), then add a final stage with duration set to "forever" and issuance set to 0. When that stage activates, the ceiling effectively disappears-there's no price at which new tokens can be minted.
+
+**Common pattern:** Many launchpad-style cobuilds use a short issuance window (30-90 days) followed by a closed stage. This creates urgency during the launch, then locks in the supply permanently.
+
+## How to pick your curve
+
+Ask yourself:
+
+1. **Revenue shape** - Are your inflows spiky (drops/campaigns) or smooth (subscriptions, fees)?
+2. **Onboarding horizon** - Do you care more about the next month, or about steady onboarding over years?
+3. **Hype vs trust** - Is your audience excited by sharp events, or comforted by stability?
+
+Then:
+
+- If you want **hype, fast treasury bootstrapping, and secondary trading** → short stage, steep curve.
+- If you want **loyalty and stable pricing** → long stage, gentle curve.
+- If you want **recurring narrative beats and staged capital** → multiple stages with big step increases.

@@ -1,0 +1,100 @@
+import { RunawayChart } from "../../components/RunawayChart";
+import {
+  TaxComparisonChart,
+  FlatIssuanceChart,
+  AutoIssuanceChart,
+  LiquiditySpiralChart,
+} from "../../components/FailureModeDiagrams";
+
+# Failure Modes
+
+This page covers the main ways a cobuild can "go wrong" from an economic/holder perspective, and how to design around those risks.
+
+## Ceiling Runaway
+
+### What It Is
+
+The issuance price (ceiling) keeps stepping up, but **market price can't keep up**. Eventually `P_AMM` sits near the floor while `P_ceil` rockets away. Rational users stop minting from the contract (why buy at the ceiling if AMM is cheaper?), so **issuance halts** and new inflows go only to the AMM.
+
+<RunawayChart />
+
+### Why It's Bad
+
+- Treasury `B` stops growing from new sales.
+- Floor `P_floor ∝ B/S` only grows via redemptions and loan fees, not new primary inflows.
+- In a speculative-only system, a confidence shock can trigger exits → redemptions drain AMM liquidity → price gets more volatile → more exits (a liquidity spiral).
+
+### Guardrails
+
+- **Match ceiling growth to real demand.** For service-coupled systems, target ceiling growth loosely in line with expected revenue growth instead of "number go up" curves.
+- **Stage AMM depth.** Don't deploy huge AMM liquidity before you have recurring real activity. Shallow but healthy initial liquidity + steady service inflows can naturally pull `P_AMM` back toward `P_ceil`.
+- **Monitor the gap.** Track `P_ceil / P_AMM`. If the ratio stays very high for long periods, you're likely in runaway; future stages should be flatter.
+
+## Tax Too Low
+
+### Symptoms
+
+- Holders treat the token as fully liquid money.
+- During stress, everyone **redeems** instead of borrowing.
+- Floor growth relies mainly on _volume_ rather than per-exit gains.
+
+### Design Facts
+
+For `rₖ` well below ~19%, models show the system is **exit-dominant** in stress: rational actors pick redemption, not loans.
+
+### Guardrails
+
+If you want **sticky capital** and loan usage, avoid very low taxes (e.g. &lt;2-3%) unless it's a deliberate "currency" design.
+
+<TaxComparisonChart />
+
+## Tax Too High
+
+### Symptoms
+
+Rational myopic users avoid cashing out; large holders may borrow as much as possible, then **default** if long-term growth doesn't materialize (system is still solvent, but effective exits route through loans).
+
+### Design Facts
+
+- Around **39%**, loans can give more immediate liquidity than cash-outs for big holders.
+- Higher `rₖ` raises the **growth required** to make borrowing worth it vs exiting.
+
+## Flat Issuance
+
+In a "loyalty token" / business currency setup:
+
+- If **issuance price stays flat forever**, the floor converges to a fixed % of that price and then **stops growing**. At that point rational users have no reason to hold; they'll gradually exit.
+
+<FlatIssuanceChart />
+
+## Aggressive Auto-Issuance
+
+Auto-issuance (pre-scheduled mints to team) **always lowers the floor**, because supply jumps but treasury doesn't.
+
+<AutoIssuanceChart />
+
+### Symptoms
+
+- Sudden drop in floor value at stage transitions.
+- Community perception of "stealth dilution".
+
+### Guardrails
+
+- Keep auto-issuance **small and infrequent**.
+- Schedule it **after periods of strong organic growth** so the floor hit is absorbed.
+- Prefer **ongoing splits** for builder funding instead of large one-time auto-mints.
+
+## Speculative Demand
+
+If your cobuild has no real product or revenue and relies entirely on traders:
+
+- During good times, everything looks fine.
+- During bad times: Redemptions raise the floor but **drain AMM liquidity**, increasing volatility and discouraging new buyers.
+
+<LiquiditySpiralChart />
+
+### Guardrails
+
+- Anchor the cobuild to **real activity** (fees, sales, usage).
+- Avoid over-sizing the AMM relative to real inflows.
+- Use **periodic fundraising** archetype (timed rounds, moderate tax) instead of an always-on, high-slope speculative curve.

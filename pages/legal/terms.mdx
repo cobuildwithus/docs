@@ -1,0 +1,1110 @@
+---
+showOutline: false
+---
+
+# Just Cobuild, Co. Terms of Service
+
+**Effective Date:** December 6, 2025  
+**Snapshot:** “Non‑custodial coordination tools for community‑owned networks, including streaming grants, tokenized revenue networks, and AI‑assisted capital allocation.”  
+**Commit Hash:** REPLACE_WITH_REPO_COMMIT
+
+> **Non‑binding summary for humans (not a contract).**  
+> Cobuild gives you non‑custodial tools to interact with onchain smart contracts for things like streaming grants, Cobuild tokens, revenue networks, loans, Reaction Markets, and AI‑assisted allocation. You keep control of your wallet; we never take custody of your assets. Using these systems is risky: smart contracts can fail, AI can be wrong, tokens can go to zero, “floors” can disappear, loans can wipe your collateral, and social‑driven systems can be gamed. We are not your broker, bank, investment adviser, or fiduciary. Nothing here is investment, legal, or tax advice. Our liability is sharply limited and most disputes must go to individual arbitration with a class‑action waiver (with a 30‑day opt‑out).
+
+---
+
+## 1. Introduction & Acceptance
+
+### 1.1 Contracting entity
+
+These Terms of Service (the **“Terms”** or this **“Agreement”**) govern your access to and use of products and services provided by **Just Cobuild, Co.**, a Delaware C‑Corporation (**“Cobuild,” “we,” “us,” or “our”**), including:
+
+- Websites at `co.build`, `justco.build`, and their subdomains (the **“Sites”**);
+- The Cobuild web app, dashboards, and other front‑end interfaces (each, an **“Interface”**);
+- Any associated software, APIs, SDKs, developer tooling, integrations, documentation, and related services  
+  (together with the Interfaces, the **“Services”**).
+
+### 1.2 Acceptance
+
+By accessing or using any Services in any way (including visiting a Site, connecting a wallet, or submitting a transaction), you:
+
+- Acknowledge that you have read and understand these Terms; and
+- Agree to be legally bound by them in full.
+
+If you are using the Services on behalf of an entity, you represent and warrant that you have authority to bind that entity, and **“you”** includes both you and that entity.
+
+If you do not agree to these Terms, **do not access or use the Services.**
+
+### 1.3 Arbitration & class‑action waiver (important)
+
+Except for the limited circumstances described in Section 17.6, **Disputes** (as defined below) between you and Cobuild must be resolved by binding **individual** arbitration, not in court, and **not in a class or representative action**. You may opt out of arbitration within 30 days of first accepting these Terms (Section 17.5).
+
+### 1.4 Changes to these Terms
+
+We may modify these Terms from time to time. For material changes we will:
+
+- Update the “Effective Date” and/or “Commit Hash” above; and
+- Provide notice through the Services (for example, banner, modal, or email if you’ve provided one) where required by law.
+
+Unless a later effective date is stated, modifications take effect when posted. If you continue using the Services after changes take effect, you are deemed to accept the updated Terms. If you do not agree, you must stop using the Services.
+
+### 1.5 Contact
+
+- Legal & general: **[legal@justco.build](mailto:legal@justco.build)**
+- Security & vulnerabilities: **[security@justco.build](mailto:security@justco.build)**
+
+Mailing address:  
+Just Cobuild, Co.  
+131 Continental Dr, Suite 305  
+Newark, DE 19713, USA
+
+Service of process (registered agent):  
+Northwest Registered Agent LLC  
+8 The Green, Suite B  
+Dover, DE 19901, USA
+
+---
+
+## 2. Eligibility & Use Restrictions
+
+### 2.1 Age and capacity
+
+You may use the Services only if:
+
+- You are at least **18 years old** (or the age of majority in your jurisdiction, if higher); and
+- You have the legal capacity to enter into a binding contract with Cobuild.
+
+### 2.2 Sanctions & restricted persons
+
+By using the Services, you represent and warrant that you:
+
+- Are **not** on any sanctions or restricted‑party list (including those maintained by OFAC, the U.S. Department of State, the EU, the U.K., or the UN); and
+- Are **not located in, ordinarily resident in, or organized under the laws of** any jurisdiction subject to comprehensive sanctions or where your use of the Services would be illegal.
+
+We may block, restrict, or terminate access where we reasonably believe you are a sanctions‑restricted person or using the Services on their behalf.
+
+### 2.3 Export controls
+
+You agree to comply with all applicable export‑control and re‑export laws and regulations. You may not use, export, or re‑export the Services in violation of U.S. or other applicable export laws.
+
+### 2.4 Responsibility for compliance
+
+You are solely responsible for understanding and complying with all laws and regulations that apply to you in connection with your use of the Services, including (without limitation) those relating to:
+
+- Anti‑money‑laundering and counter‑terrorist‑financing;
+- Sanctions;
+- Securities, commodities, and derivatives;
+- Consumer protection and unfair‑competition laws;
+- Tax; and
+- Data protection, privacy, and automated decision‑making (for example, GDPR and the EU AI Act).
+
+---
+
+## 3. Key Defined Terms
+
+For purposes of these Terms:
+
+- **Baseline Pool** – The portion of a Flow’s budget that is distributed evenly (or under simple rules) across approved Builders.
+
+- **Bonus Pool** – The portion of a Flow’s budget that is allocated in a performance‑weighted way based on signals such as Reaction Markets, votes, or other metrics.
+
+- **Builder** – An individual or entity that applies to receive funding or other support through Cobuild‑related programs (for example, Flows or Rounds) and meets posted eligibility criteria.
+
+- **Cobuild Token** – A Token configured using Cobuild’s parameters (for example, staged issuance, splits, cash‑out floors, revenue routing, and loan features) and typically implemented on third‑party protocols such as revnets and Juicebox. A Cobuild Token’s behaviour is determined by its Smart Contracts, **not** by Cobuild as issuer or guarantor.
+
+- **Revenue Network / Revnet** – Smart Contracts that route incoming payments into a shared onchain treasury and mint or redeem Tokens under predefined rules (for example, staged issuance, floors, and cash‑out taxes). In Cobuild's current implementation, Revnets are built on top of the open‑source **Juicebox protocol**, whose core contracts are deployed and governed by **Juicebox DAO** and independent maintainers, not by Cobuild. Revenue Networks may be deployed, governed, or upgraded by third parties and are not controlled by Cobuild.
+
+- **Floor / Cash‑Out Floor** – The onchain redemption value per Token implied by the relevant Smart Contracts and treasury at a given time, **subject to** the contract terms, fees, available liquidity, and protocol risk. It is an internal mechanism of the Smart Contracts and **not** a guaranteed minimum market price or redemption right against Cobuild.
+
+- **Ceiling / Issuance Price** – The price and schedule according to which new Tokens may be minted from a Smart Contract in a given stage. The ceiling is set by code and may differ substantially from secondary‑market prices.
+
+- **Loan** – An onchain borrowing mechanism where a user locks or burns Tokens as collateral in exchange for a disbursement from a treasury, subject to fees, over‑collateralization, and a maximum duration. Loans are executed and enforced by Smart Contracts and **not** by Cobuild as lender, unless explicitly stated in a separate written agreement.
+
+- **Reaction Market** – A system where social‑media actions (for example, likes, comments, reposts, follows) are treated as micro‑purchases that automatically allocate a User’s configured budget to builders or tokens.
+
+- **Reaction Market Budget** – The amount of funds a User designates for automatic micro‑purchases in a Reaction Market, including per‑reaction amounts and caps.
+
+- **AI Allocation Systems** – Automated systems, including large language models and other algorithms, used to filter, rank, or score proposals, builders, or content for purposes of allocating capital in Flows, Rounds, Reaction Markets, and similar programs.
+
+- **Flow / Flows** – Cobuild’s “always‑on” streaming‑grants architecture: onchain Smart Contracts and curated registries for recurring stipends, typically combining a Baseline Pool and a performance‑weighted Bonus Pool.
+
+- **Rounds** – Time‑bounded grant or bounty competitions that allocate a fixed budget according to market‑like and/or AI‑assisted signals.
+
+- **Flow TCR / TCR** – Token‑curated registries used to manage lists of eligible builders or recipients. Inclusion or removal is decided according to onchain rules.
+
+- **Stream** – The onchain mechanism by which funds accrue over time to approved recipients and may be claimed by calling the relevant Smart Contract.
+
+- **Smart Contract(s)** – Autonomous programs deployed on public blockchains (for example, revnet contracts, Flows contracts, Juicebox treasuries) that control how funds move. Smart Contracts are separate from the Services and may be deployed, upgraded, or governed by third parties.
+
+- **Interface** – Any Cobuild‑controlled website, application, or tool that lets users compose and submit transactions to Smart Contracts while retaining control of their private keys.
+
+- **Grant‑Round Escrow** – Limited, program‑specific arrangements where Cobuild or an affiliate temporarily holds funds (for example, fiat or stablecoins) for a defined period (such as a grant round) pending KYC/AML checks, payment routing, or programmatic disbursement.
+
+- **Tokens** – Digital assets (for example, ERC‑20s) minted or managed by Smart Contracts accessed through the Services. Unless clearly stated otherwise, Tokens are created and governed by those contracts and **not** issued or redeemed by Cobuild.
+
+- **Sponsor** – Any User that contributes funds, commits a budget, or otherwise supports a Flow, Round, or similar program.
+
+Capitalized terms not defined above have the meanings given elsewhere in these Terms.
+
+---
+
+## 4. Description of Services & Non‑Custodial Nature
+
+### 4.1 Non‑custodial Interfaces
+
+Cobuild provides **non‑custodial** Interfaces that allow you to:
+
+- Connect an EVM‑compatible wallet;
+- Read data from public blockchains and other sources; and
+- Construct and broadcast transactions to Smart Contracts.
+
+Cobuild does **not**:
+
+- Take custody, possession, or control of your digital assets at any time;
+- Hold, recover, or reset your private keys, seed phrase, or wallet passwords; or
+- Reverse, cancel, or modify blockchain transactions once they have been submitted.
+
+Your relationship with your wallet provider (for example, MetaMask, Rabby, embedded wallets) is governed by that provider’s own terms and policies.
+
+### 4.2 Smart‑contract persistence and decentralization
+
+Many Smart Contracts accessible through the Services:
+
+- Are deployed to public blockchains (for example, Ethereum, L2s, and other EVM networks);
+- Are **not** controlled by Cobuild once deployed; and
+- May be used directly (without the Services) by anyone capable of interacting with those blockchains.
+
+Where Cobuild or its contributors deploy or help deploy Smart Contracts, those contracts typically remain onchain even if Cobuild ceases to operate.
+
+### 4.3 Open‑source and third‑party code
+
+Smart Contracts and some front‑end components may be open‑source or source‑available under their own licenses (for example, MIT, GPL, or similar). Your rights and obligations with respect to that code are determined by the applicable license, which may grant you broader rights than this Agreement.
+
+The Services may also integrate or rely on third‑party software, infrastructure, and APIs (for example, RPC providers, indexers, analytics, Farcaster or X/Twitter APIs). These third‑party services are **not** controlled by Cobuild and are subject to their own terms and policies.
+
+### 4.4 Limited custody exceptions (grant‑round escrow, etc.)
+
+Cobuild intends the Services to be non‑custodial. However, limited, clearly disclosed exceptions may apply, such as:
+
+- **Grant‑Round Escrow or fiat rails** where Cobuild or an affiliate holds funds temporarily to:
+  - Conduct KYC/AML/sanctions checks;
+  - Aggregate or route contributions; or
+  - Facilitate off‑chain payouts or other operational steps.
+
+Where such custody is used, it will be disclosed in the relevant UI or documentation, together with any additional eligibility, risk, or compliance terms.
+
+### 4.5 Upgrades, forks & contract addresses
+
+Protocols and Smart Contracts accessible through the Services may be upgraded, replaced, forked, or deprecated by their respective communities or deployers. Contract addresses may change.
+
+You are solely responsible for:
+
+- Verifying that you are interacting with the intended Smart Contracts; and
+- Understanding the impact of any upgrade, migration, or fork before transacting.
+
+Cobuild is not responsible for losses arising from your interaction with incorrect, malicious, or deprecated contracts (including phishing addresses and spoofed interfaces).
+
+### 4.6 Third‑party protocols and integrations
+
+The Services may integrate or interact with:
+
+- Smart contracts operated by third parties (for example, Juicebox, revnets, DeFi protocols, bridges);
+- Wallets, RPC providers, indexers, analytics tools, social platforms, and data services; and
+- Infrastructure providers such as cloud providers and analytics vendors.
+
+Third‑party services are **not** operated by Cobuild. Your use of them is governed by their own terms and policies. Cobuild disclaims all responsibility for:
+
+- Third‑party outages, bugs, exploits, or security incidents;
+- Changes in third‑party APIs or pricing; and
+- Losses arising from your interactions with third‑party services or protocols.
+
+The Services surface and interact with third‑party treasury and issuance protocols, including the **Juicebox protocol**. Juicebox's core smart contracts are deployed and governed by **Juicebox DAO** and its community. Cobuild does not operate the Juicebox protocol or Juicebox DAO, does not control upgrades to their contracts, and is not responsible for their acts or omissions. When you interact with Revnets or treasuries built on Juicebox, you are interacting directly with those third‑party protocols, not with Cobuild.
+
+### 4.7 Cobuild Tokens & Revenue Networks
+
+Through the Interfaces you may interact with Cobuild Tokens and Revenue Networks (for example, revnet or Juicebox‑based treasuries). These Smart Contracts may implement features such as:
+
+- Staged issuance and time‑varying mint prices (ceilings);
+- Onchain redemption or “cash‑out” mechanics referencing a contract treasury (floors);
+- Token splits and auto‑issuance to specified recipients; and
+- Loan functionality that allows Users to borrow against collateralized Tokens.
+
+These mechanics are implemented solely in the relevant Smart Contracts. Cobuild does **not**:
+
+- Custody or guarantee any treasury assets;
+- Guarantee that any redemption, “floor,” or loan functionality will be available at any particular time or price; or
+- Guarantee that Smart Contracts will behave as expected or be free from bugs, exploits, or governance changes.
+
+Even where Tokens are branded with Cobuild‑related names, they are minted, priced, and redeemed (if at all) solely by Smart Contracts. Cobuild is **not your counterparty** to any Token mint, purchase, redemption, or loan transaction unless explicitly stated in a separate written agreement.
+
+### 4.8 Social and third‑party integrations (Reaction Markets)
+
+Some Services connect to third‑party platforms (for example, Farcaster or X/Twitter) to read or act on your posts, likes, comments, or follows in connection with Rounds or Reaction Markets. If you enable such integrations:
+
+- You authorize Cobuild to read certain content and metadata from your connected accounts; and
+- You authorize Cobuild to initiate onchain transactions from your configured Reaction Market Budgets in response to your social actions, subject to the limits you set in the Interface.
+
+You are responsible for:
+
+- Configuring and monitoring your budgets and caps; and
+- Understanding that ordinary social actions (for example, “like,” “repost”) may result in **real onchain spending** from your budgets.
+
+Cobuild is not responsible for losses arising from misconfigured budgets, compromised social accounts, or third‑party platform changes.
+
+Your use of third‑party platforms is governed by their own terms. Cobuild is not liable for their acts or omissions.
+
+---
+
+## 5. Funding, Streaming & Token Mechanics
+
+### 5.1 Streaming grants (Flows & Streams)
+
+Where the Services support streaming grants or Flows:
+
+- Funds accrue over time as defined in the relevant Smart Contracts; and
+- Recipients may claim accrued amounts at any time by calling those contracts with a compatible wallet.
+
+Eligibility criteria, stream parameters, and program logic are defined in Smart Contracts and/or program documentation and may change via protocol or community governance outside Cobuild’s direct control.
+
+### 5.2 Token issuance and sales
+
+Tokens referenced in the Interfaces are generally:
+
+- Minted and governed by independent Smart Contracts (for example, revnets built on Juicebox); and
+- Acquired by sending assets to those contracts, **not** to Cobuild.
+
+Except where expressly stated in a separate written agreement:
+
+- Cobuild does **not** sell Tokens to you;
+- Cobuild does **not** broker trades or act as your agent; and
+- All transactions are **unsolicited** and initiated solely by you.
+
+Token functionality (including any floors, ceilings, splits, auto‑issuance, or loan features) is defined by the underlying Smart Contracts and not guaranteed by Cobuild.
+
+For Cobuild Tokens and Revenue Networks built on Juicebox, all issuance, redemption, cash‑out, and treasury‑accounting logic is implemented and executed solely by the underlying **Juicebox / Revnet smart contracts**. Those contracts are part of the Juicebox protocol, governed by Juicebox DAO and its community processes. Cobuild does not:
+
+- issue, burn, or redeem Tokens on your behalf,
+- control or custody the assets in Juicebox treasuries, or
+- unilaterally change issuance, redemption, or floor mechanics for any Juicebox‑based Token.
+
+### 5.3 Revenue Networks
+
+The Services may allow you to route a portion of your revenue, tips, or other payments into Smart Contracts that mint Tokens or otherwise credit individuals or communities (**“Revenue Networks”**). For example, you can:
+
+- Configure a percentage of product sales to be sent to a treasury that mints a community’s Token; and/or
+- Share minted Tokens with your customers.
+
+By configuring or using any Revenue Network features, you acknowledge that:
+
+- Any routing of funds into a treasury is a transaction with Smart Contracts, not Cobuild;
+- Any “buybacks,” “revenue splits,” or “rewards” described in the Interface are implemented solely in those Smart Contracts and may fail or behave unexpectedly; and
+- You are solely responsible for any tax, accounting, consumer‑protection, employment, or other obligations arising from using Revenue Networks in your business.
+
+### 5.4 Cash‑Out Floors, Redemption & Secondary Markets
+
+Some Smart Contracts implement redemption or “cash‑out” functionality that allows Token holders to burn Tokens in exchange for a share of a treasury, often subject to a fee or “cash‑out tax.” These mechanics may be described as a **“floor,” “cash‑out floor,” or “redemption value.”**
+
+You acknowledge and agree that:
+
+- Any such floor is a **mechanical output** of the relevant Smart Contracts and is **not** a guarantee from Cobuild;
+- Redemptions may be limited, disabled, throttled, or unavailable at any time due to configuration, upgrades, governance, bugs, exploits, lack of liquidity, network conditions, or other factors;
+- Secondary‑market prices on AMMs or other venues may trade **below** or above any onchain redemption value;
+- Cobuild does not promise that you will be able to redeem Tokens at any particular price, or at all, and does not backstop shortfalls in treasuries or liquidity; and
+- In many cases these treasuries and floors are implemented by third‑party protocols such as the **Juicebox protocol**, governed by Juicebox DAO. Changes, bugs, or governance actions in those protocols can directly affect your ability to mint, redeem, or access treasury assets, and Cobuild has no control over those protocol‑level decisions.
+
+Any references in the Services or docs to a “floor” or “cash‑out value” are descriptive of Smart‑Contract mechanics only, **not** a guarantee of return, downside protection, or capital preservation.
+
+### 5.5 Loans and collateral
+
+Some Smart Contracts implement Loan functionality that allows Users to borrow assets from a treasury by locking or burning Tokens as collateral.
+
+Unless expressly stated in a separate written agreement:
+
+- Cobuild is **not** the lender and does not underwrite, approve, or advise on Loans;
+- All Loan terms (including maximum borrow amounts, fees, durations, collateralization and default mechanics) are enforced automatically by Smart Contracts and may change through upgrades or parameter changes beyond Cobuild’s control;
+- If you fail to repay a Loan in accordance with its terms, you may **permanently lose some or all of your collateral and any associated upside**; and
+- Loan costs may be economically significant and may exceed returns you could earn elsewhere.
+
+You are solely responsible for evaluating whether any Loan is appropriate for you and for monitoring your positions. Cobuild does not provide margin calls, personalised monitoring, or individual advice.
+
+### 5.6 Reaction Markets & social‑driven micro‑buys
+
+Reaction Markets treat social‑media engagement as micro‑purchases:
+
+- You pre‑configure budgets and per‑reaction amounts;
+- When you engage (for example, like, comment, follow) through enabled flows, Smart Contracts may automatically mint or buy tokens and route them to creators or builders.
+
+By enabling Reaction Markets you acknowledge that:
+
+- Your configured budgets represent **real funds** that can be spent automatically as you interact on supported platforms;
+- Engagement signals may be noisy, manipulated, or gamed by others (for example, bots, sybils, engagement‑farms);
+- Cobuild does not guarantee that Reaction Markets will allocate capital fairly or in line with your subjective preferences; and
+- Cobuild may suspend or adjust Reaction Market features without notice if we believe they are being abused or if required by law.
+
+You are responsible for monitoring your budgets and disabling integrations if you no longer wish your social behaviour to trigger purchases.
+
+---
+
+## 6. Fees, Refunds & Taxes
+
+### 6.1 Network fees
+
+Any blockchain transaction you submit requires payment of network fees (for example, gas). You are solely responsible for:
+
+- Ensuring you have sufficient balance to cover gas and other network costs; and
+- The outcome of transactions you authorise (including failed or reverted transactions).
+
+Cobuild cannot refund gas costs under any circumstances.
+
+### 6.2 Protocol and administrative fees
+
+Smart Contracts and programs may charge:
+
+- Protocol‑level fees (for example, platform fees, Loan source fees, redemption fees, treasury fees); and/or
+- Cobuild **Variable Fees** for operating grant rounds, Flows, or other Services.
+
+Where Cobuild charges a Variable Fee:
+
+- It will be disclosed in the relevant Interface, docs, or program description; and
+- Unless expressly stated otherwise, it will **not exceed 5%** of the funds processed for that program.
+
+Protocol‑level fees are set by Smart Contracts or communities and may change outside Cobuild’s control.
+
+### 6.3 No refunds (except as required by law)
+
+Except where required by applicable law or card‑network rules:
+
+- All gas fees, protocol fees, and Cobuild fees are **non‑refundable**; and
+- Application bonds, challenge bonds, and similar staking amounts forfeited by contract are **not refundable** by Cobuild.
+
+### 6.4 Taxes
+
+You are solely responsible for:
+
+- Determining whether and how any transaction, Loan, reward, stream, or Token interaction is taxable; and
+- Reporting and paying any applicable taxes to the appropriate authorities.
+
+Cobuild does not provide tax advice and does not withhold taxes on your behalf unless required by law.
+
+---
+
+## 7. User Responsibilities & Prohibited Conduct
+
+### 7.1 General obligations
+
+As a condition of accessing or using the Services, you agree to:
+
+- Use the Services only as permitted by these Terms and applicable law;
+- Provide accurate, current, and complete information when you choose to provide information;
+- Maintain the security of your wallet, devices, and credentials; and
+- Notify us promptly at [security@justco.build](mailto:security@justco.build) if you believe the Services or your account integrations have been compromised.
+
+### 7.2 Prohibited activities
+
+You agree **not** to:
+
+1. **Break the law.** Use the Services in violation of any applicable law, regulation, sanctions regime, court order, or other legal requirement.
+
+2. **Exploit or attack systems.** Introduce malware; attempt to hack, DDoS, or otherwise interfere with the security or operation of the Services, Smart Contracts, or any infrastructure supporting them.
+
+3. **Market manipulation & fraud.** Engage in rug pulls, wash‑trading, pump‑and‑dump schemes, front‑running using non‑public information, or other manipulative or deceptive practices; impersonate others; submit false or misleading information.
+
+4. **Money laundering & illegal proceeds.** Use the Services to transfer, conceal, or obfuscate proceeds of crime, or to facilitate terrorist financing, sanctions evasion, or other unlawful activity.
+
+5. **IP and content violations.** Upload or link to content that infringes or misappropriates any copyright, trademark, trade secret, privacy, publicity, or other proprietary right; or that is defamatory, obscene, hateful, or otherwise unlawful.
+
+6. **Unwanted automation & scraping.** Use bots, scrapers, crawlers, or similar tools to access the Services, except as explicitly permitted (for example, documented APIs) or under an applicable open‑source license.
+
+7. **Gaming allocation systems.** Attempt to manipulate Flows, Rounds, Reaction Markets, or other allocation mechanisms, including by:
+   - Creating or coordinating fake or duplicate identities (Sybil attacks);
+   - Generating artificial or fraudulent engagement (for example, bots, engagement farms) to capture Reaction Market budgets; or
+   - Colluding to mislead AI Allocation Systems.
+
+8. **Interference with AI systems.** Deliberately provide adversarial inputs to Cobuild’s AI Allocation Systems with the primary intent of degrading their performance, misallocating funds, exfiltrating other users’ data, or probing for confidential model details.
+
+9. **Unsolicited spam & scams.** Use the Services to distribute spam, phishing messages, pyramid schemes, or other deceptive communications.
+
+10. **Other unlawful conduct.** Engage in any conduct that violates applicable law or the rights of others.
+
+Cobuild may restrict or terminate your access to the Services for any behaviour we reasonably believe violates these Terms or creates legal, security, or reputational risk.
+
+---
+
+## 8. Intellectual Property
+
+### 8.1 Cobuild IP; license to you
+
+Except for open‑source components and third‑party content:
+
+- Cobuild and its licensors own all rights, title, and interest in and to the Services, including software, text, graphics, logos, designs, and other content (collectively, **“Cobuild IP”**).
+
+Subject to these Terms, Cobuild grants you a limited, revocable, non‑exclusive, non‑transferable, non‑sublicensable license to access and use the Services solely for lawful purposes in accordance with this Agreement.
+
+You may not copy, modify, distribute, reverse engineer, or create derivative works from the Services except as allowed by applicable law or by an applicable open‑source license.
+
+### 8.2 Open‑source components
+
+Where code is released under open‑source licenses, your rights and obligations with respect to that code are governed by the applicable license (for example, MIT, GPL). Such licenses may allow broader use than this Agreement; nothing here restricts your rights under those licenses.
+
+### 8.3 Trademarks
+
+“Cobuild,” “Just Cobuild, Co.,” associated logos, and other marks are trademarks or service marks of Cobuild. You may not use Cobuild’s marks without our prior written permission, except for nominative fair use.
+
+### 8.4 User‑generated content & feedback
+
+If you submit content (for example, proposals, posts, text, images, or links) through the Services, then:
+
+- You retain ownership of your content; and
+- You grant Cobuild a worldwide, non‑exclusive, sublicensable, royalty‑free license to use, reproduce, display, adapt, distribute, and otherwise exploit that content as reasonably necessary to operate, promote, and improve the Services.
+
+If you submit feedback, ideas, or suggestions, you grant Cobuild a perpetual, irrevocable, worldwide, royalty‑free license to use them for any purpose without compensation to you.
+
+You represent and warrant that you have all rights necessary to grant these licenses and that your content does not infringe any third‑party rights or violate any law.
+
+### 8.5 DMCA / takedowns
+
+If you believe content accessible via Cobuild‑hosted Services infringes your copyright or trademark, you may send a notice to:
+
+> DMCA Agent  
+> Just Cobuild, Co.  
+> 131 Continental Dr, Suite 305  
+> Newark, DE 19713, USA  
+> Email: [legal@justco.build](mailto:legal@justco.build)
+
+Your notice must include all information required by applicable law (for example, the DMCA). Cobuild may remove or disable access to allegedly infringing material and, where appropriate, terminate repeat infringers.
+
+---
+
+## 9. Privacy & Data
+
+Cobuild’s collection, use, and sharing of personal data is described in the **Just Cobuild, Co. Privacy Policy** below (or at `/legal/privacy` if hosted separately). By using the Services, you acknowledge that your information will be processed as described in that policy.
+
+If these Terms conflict with the Privacy Policy on matters of data processing, the Privacy Policy controls.
+
+---
+
+## 10. AI & Automated Decision‑Making
+
+### 10.1 Use of AI Allocation Systems
+
+Cobuild uses AI Allocation Systems (including large language models and other algorithms) to help:
+
+- Filter, rank, and score proposals, builders, and content;
+- Allocate Bonus Pools or other program funds; and
+- Flag potential abuse or sybil patterns.
+
+In some programs, AI Allocation Systems may contribute to decisions about whether and how much funding you receive.
+
+### 10.2 No guarantees; AI can be wrong or biased
+
+AI outputs can be wrong, biased, incomplete, or inconsistent. Different models or prompts may yield different results. You understand that:
+
+- Participation in any Flow, Round, Reaction Market, or other program does **not** entitle you to funding;
+- Cobuild does not guarantee that AI‑driven allocation will be fair, accurate, or aligned with your expectations; and
+- Cobuild may override, adjust, or ignore AI outputs in its discretion.
+
+### 10.3 Rights relating to automated decisions
+
+If you are in a jurisdiction that grants rights in relation to automated decision‑making (for example, GDPR Article 22 in the EU), you may contact us at [legal@justco.build](mailto:legal@justco.build) to:
+
+- Request more information about how AI is used in a specific program affecting you; and
+- Where required by law, request human review of a funding decision.
+
+Cobuild will comply with such requests where legally required and technically feasible.
+
+---
+
+## 11. Security & Vulnerability Reporting
+
+### 11.1 Security expectations
+
+You are responsible for the security of:
+
+- Your devices and operating systems;
+- Your wallets, private keys, and seed phrases; and
+- Any credentials or tokens used to access the Services or integrated platforms.
+
+Cobuild cannot recover lost private keys, reverse transactions, or undo interactions with Smart Contracts.
+
+### 11.2 Reporting vulnerabilities
+
+If you discover a security vulnerability or other serious issue affecting the Services or related Smart Contracts, please report it promptly and privately to:
+
+- **[security@justco.build](mailto:security@justco.build)**
+
+Cobuild does not currently operate a formal bug bounty program but may, at its sole discretion, recognize or reward good‑faith reports.
+
+Cobuild will not pursue civil action or refer for criminal prosecution researchers who:
+
+- Act in good faith;
+- Share vulnerabilities privately with Cobuild;
+- Do not exploit them for gain or cause undue harm; and
+- Allow a reasonable time for remediation before any public disclosure.
+
+This does not authorize you to access or modify data you are not entitled to or to disrupt the Services.
+
+---
+
+## 12. Assumption of Risk; No Advice; Regulatory Matters
+
+### 12.1 Blockchain and smart‑contract risks
+
+By using the Services, you acknowledge and accept the inherent risks of cryptographic and blockchain‑based systems, including that:
+
+- Digital assets and Tokens are **highly volatile** and may lose all value;
+- Smart Contracts may contain bugs, economic flaws, or vulnerabilities that can be exploited;
+- Blockchain transactions are generally **irreversible** once confirmed;
+- Networks may experience congestion, forks, reorganizations, or governance changes that affect contract behaviour;
+- Bridges, L2s, wrapped assets, and stablecoins introduce additional risk (for example, de‑pegs, bridge exploits); and
+- MEV, frontrunning, and transaction ordering by validators or builders may adversely affect your transactions.
+
+You **assume all such risks** when interacting with Smart Contracts or Tokens via the Services or otherwise.
+
+### 12.2 Revenue‑network & floor risks
+
+Cobuild Tokens and other Tokens accessible through the Services may implement:
+
+- Revenue Networks and treasuries;
+- Onchain “floors” and redemption mechanics; and
+- Cash‑out taxes or fees.
+
+You understand that:
+
+- Treasury assets may be hacked, drained, misconfigured, or de‑pegged;
+- Floors and redemption values may be mis‑calculated, temporarily unavailable, or permanently disabled;
+- Secondary‑market prices may be below any theoretical floor or redemption value or may go to zero; and
+- You may be unable to redeem or cash out Tokens at the value you expect, or at all.
+
+Any language in the Services or docs about “floors,” “cash‑out value,” “partial downside protection,” or similar effects describes design intent, **not a guarantee**.
+
+### 12.3 Loan and leverage risks
+
+Loans implemented by Smart Contracts are over‑collateralized and may **not** include margin calls or active risk management. If you take a Loan:
+
+- You may pay substantial fixed fees (which can be significant on an annualized basis); and
+- If you fail to repay on time, you may permanently lose your collateral and any associated upside.
+
+Loans may be economically inferior to simply selling or redeeming Tokens and may be treated differently under the laws of your jurisdiction (for example, as credit or securities). You should only take Loans if you fully understand the mechanics and risks.
+
+### 12.4 AI and allocation risks
+
+You understand that AI Allocation Systems and algorithmic allocation:
+
+- May misinterpret content, miss important context, or exhibit bias;
+- May allocate less funding to you than you believe you deserve, or none at all; and
+- Are experimental and may be subject to evolving regulation (for example, the EU AI Act).
+
+Participation in any Cobuild‑related allocation system does not create a right to funding or a guarantee of any particular outcome.
+
+### 12.5 Social‑signal and sybil risks
+
+Allocation mechanisms that rely on social or engagement signals (for example, likes, comments, follows) are subject to:
+
+- Noise and manipulation (for example, bots, sybil attacks, engagement farming); and
+- Changing rules and incentives over time.
+
+You may lose funds or miss out on rewards due to other users’ behaviour, market dynamics, or flaws in the mechanism design. Cobuild does not guarantee the integrity of any identity, social signal, or engagement metric.
+
+### 12.6 No investment, legal, or tax advice
+
+All content provided through the Services (including docs, examples, charts, simulations, and AI outputs) is for **general informational purposes only** and:
+
+- Does **not** constitute investment, legal, tax, or other professional advice;
+- Does not consider your personal objectives, financial situation, or risk tolerance; and
+- Should not be relied upon to make decisions.
+
+You should consult your own legal, tax, and financial advisors before engaging in any transaction or strategy.
+
+### 12.7 Unsolicited transactions; no suitability review
+
+Any transaction you initiate using the Services is **unsolicited**:
+
+- Cobuild does not recommend or solicit any transaction;
+- Cobuild does not perform suitability or appropriateness assessments; and
+- You alone decide whether, when, and how to interact with any Token, Loan, or Smart Contract.
+
+### 12.8 Regulatory status; no regulated services
+
+Cobuild is **not** intended to operate as:
+
+- A bank, money transmitter, payment institution, or custodian;
+- A registered national securities exchange, securities broker, dealer, alternative trading system, or investment adviser; or
+- A commodities or derivatives exchange or intermediary.
+
+The Services are designed as **non‑custodial tooling** for interacting with Smart Contracts you choose to use. Trades, Loans, and other transactions occur directly between you and Smart Contracts or other users; Cobuild does not execute, clear, or settle them on your behalf.
+
+Nothing in the Services is intended to constitute or be construed as the provision of regulated “crypto‑asset services” (for example, under the EU MiCA Regulation) or equivalent regimes. You are solely responsible for determining whether and how your use of the Services is permitted in your jurisdiction and for complying with any registration, licensing, or other requirements that apply to you.
+
+---
+
+## 13. Disclaimers of Warranties
+
+To the fullest extent permitted by law:
+
+- The Services (and any content, AI systems, or third‑party integrations) are provided on an **“AS IS” and “AS AVAILABLE”** basis;
+- Cobuild and its affiliates, officers, directors, employees, contractors, agents, and licensors (the **“Cobuild Parties”**) make **no warranties of any kind**, whether express, implied, or statutory, including any warranties of merchantability, fitness for a particular purpose, non‑infringement, title, quiet enjoyment, or that the Services will be accurate, reliable, error‑free, secure, or uninterrupted; and
+- No advice, information, or statement obtained from the Services (including AI outputs) creates any warranty not expressly stated in these Terms.
+
+You use the Services at **your own risk**.
+
+---
+
+## 14. Limitation of Liability
+
+To the maximum extent permitted by law:
+
+1. **Excluded damages.**  
+   None of the Cobuild Parties will be liable to you for any:
+   - Indirect, incidental, special, exemplary, punitive, or consequential damages; or
+   - Loss of profits, revenue, goodwill, data, or opportunity,
+
+   arising out of or in connection with your use (or inability to use) the Services, Smart Contracts, or any third‑party services, even if advised of the possibility of such damages.
+
+2. **Cap on aggregate liability.**  
+   If, notwithstanding these Terms, a Cobuild Party is held liable to you, the **aggregate** liability of all Cobuild Parties for all claims arising out of or related to the Services or these Terms will not exceed the greater of:
+   - **USD 100**, or
+   - The total amount of Cobuild‑specific fees (excluding gas, protocol‑level fees, and amounts paid to third‑party protocols) that you paid directly to Cobuild during the **12 months** preceding the event giving rise to the claim.
+
+3. **Non‑waivable exclusions.**  
+   These limitations do not limit liability for fraud, intentional misconduct, or any other liability that cannot be limited under applicable law.
+
+### 14.1 No fiduciary duties
+
+These Terms and your use of the Services do not create any fiduciary duties on the part of Cobuild or any Cobuild Party. To the fullest extent permitted by law, you waive and discla im any such duties that might otherwise exist in law or equity.
+
+---
+
+## 15. Indemnification
+
+You agree to **indemnify, defend, and hold harmless** the Cobuild Parties from and against any and all claims, demands, actions, damages, losses, liabilities, costs, and expenses (including reasonable attorneys’ fees) arising out of or related to:
+
+- Your access to or use of the Services or any Smart Contract;
+- Your violation of these Terms or any applicable law or regulation;
+- Your infringement or misappropriation of any third‑party right; or
+- Any dispute between you and another user or third party.
+
+Cobuild may assume exclusive control of any matter subject to indemnification. You may not settle any claim involving a Cobuild Party without Cobuild’s prior written consent.
+
+---
+
+## 16. Term, Suspension & Termination
+
+These Terms are effective when you first access the Services and continue until terminated as described here.
+
+Cobuild may, at its sole discretion and without liability to you, with or without notice:
+
+- Suspend, restrict, or terminate your access to all or part of the Services; or
+- Block transactions originating from or directed to certain addresses, IPs, or jurisdictions,
+
+if we reasonably believe:
+
+- You have violated these Terms or applicable law;
+- Your use of the Services creates risk for other users, Cobuild, or any third party; or
+- We are required to do so by law, court order, or a regulator.
+
+Upon termination:
+
+- Your license to use Cobuild‑hosted Interfaces ends;
+- Onchain Smart Contracts may remain available and continue operating independently; and
+- Sections **8–19** survive.
+
+---
+
+## 17. Governing Law & Dispute Resolution
+
+### 17.1 Governing law
+
+These Terms and any Dispute between you and Cobuild arising out of or relating to the Services will be governed by the laws of the **State of Delaware**, USA, without regard to its conflict‑of‑law rules, and by applicable U.S. federal law.
+
+### 17.2 Informal resolution
+
+Before starting arbitration or other formal proceedings, you agree to attempt to resolve any Dispute informally by emailing **[legal@justco.build](mailto:legal@justco.build)** and describing the basis of the Dispute. If the parties cannot resolve the Dispute within **60 days**, either party may commence arbitration as described below.
+
+### 17.3 Binding arbitration
+
+Except as provided in Sections 17.5 and 17.6, any **Dispute** (any claim or controversy arising out of or relating to the Services, these Terms, or any other acts or omissions for which you may contend Cobuild is liable) will be resolved by **binding arbitration** administered by **JAMS** under its applicable rules (including, where applicable, JAMS’ expedited or mass‑arbitration procedures).
+
+- The arbitration will be conducted by a single neutral arbitrator;
+- The seat and venue of arbitration will be **Wilmington, Delaware, USA**, unless the parties agree otherwise; and
+- The arbitration will be confidential.
+
+Judgment on the award may be entered in any court of competent jurisdiction.
+
+### 17.4 Class‑action and jury‑trial waiver
+
+To the fullest extent permitted by law:
+
+- All Disputes must be brought in your **individual capacity**, not as a plaintiff or class member in any purported class, collective, or representative proceeding; and
+- You and Cobuild **waive any right to a jury trial**.
+
+Class arbitrations, class actions, private attorney‑general actions, and consolidation of proceedings are **not allowed**.
+
+### 17.5 Arbitration opt‑out
+
+You may opt out of the arbitration requirement (but **not** the class‑action waiver) by sending an email to **[legal@justco.build](mailto:legal@justco.build)** with subject line **“Arbitration Opt‑Out”** within **30 days** after you first accept these Terms. Your email must include:
+
+- Your full name;
+- A contact email; and
+- A clear statement that you wish to opt out of arbitration.
+
+You may also send a written opt‑out notice to:
+
+> Just Cobuild, Co. – Legal  
+> 131 Continental Dr, Suite 305  
+> Newark, DE 19713, USA
+
+### 17.6 Small‑claims and injunctive relief
+
+Nothing in this Section prevents either party from:
+
+- Bringing an individual action in small‑claims court if within that court’s jurisdiction; or
+- Seeking provisional or injunctive relief in a court of competent jurisdiction to protect its rights (for example, intellectual‑property rights or misuse of the Services) pending final resolution.
+
+---
+
+## 18. Changes to the Services
+
+Cobuild reserves the right, without liability to you, to:
+
+- Add, modify, or discontinue any part of the Services;
+- Impose or change eligibility criteria; or
+- Impose limits on certain features or restrict access to parts or all of the Services,
+
+where reasonably necessary for technical, legal, regulatory, security, or business reasons.
+
+Cobuild will use reasonable efforts to give notice of changes that materially impact your use where legally required.
+
+---
+
+## 19. Miscellaneous
+
+- **Entire agreement.** These Terms constitute the entire agreement between you and Cobuild regarding the Services and supersede all prior or contemporaneous communications about the same subject matter.
+
+- **Assignment.** You may not assign or transfer these Terms without Cobuild’s prior written consent. Cobuild may freely assign these Terms in connection with a merger, acquisition, reorganization, or sale of assets.
+
+- **Severability.** If any provision of these Terms is held invalid or unenforceable, the remaining provisions remain in full force and effect.
+
+- **No waiver.** Cobuild’s failure to enforce any provision is not a waiver of its right to do so later.
+
+- **Force majeure.** Cobuild is not liable for delays or failures caused by events beyond its reasonable control, including natural disasters, war, labour disputes, government action, internet or blockchain failures, major protocol bugs, or chain re‑orgs.
+
+- **Relationship.** Nothing in these Terms creates a partnership, joint venture, agency, or fiduciary relationship between you and Cobuild.
+
+---
+
+## 20. Plain‑Language Summary (Non‑Binding)
+
+This section is just a human‑readable recap and does **not** change the Terms:
+
+- Cobuild runs non‑custodial Interfaces and tooling; you always control your wallet and interact with Smart Contracts at your own risk.
+- Cobuild tokens, floors, revenue networks, loans, and social‑driven allocation are all **experimental** and can fail in many ways. There is no guaranteed downside protection.
+- AI helps allocate capital but can be wrong or biased; you are never guaranteed funding.
+- Cobuild is not your broker, bank, or investment adviser and is not promising to comply with or satisfy any particular regulatory framework for you.
+- Our liability is very limited and disputes are mostly resolved in individual arbitration with no class actions.
+
+---
+
+# Just Cobuild, Co. Privacy Policy
+
+**Effective Date:** December 6, 2025  
+**Snapshot:** “Privacy‑first approach for non‑custodial coordination and streaming funding.”  
+**Commit Hash:** REPLACE_WITH_REPO_COMMIT
+
+This Privacy Policy (the **“Policy”**) explains how **Just Cobuild, Co.** (**“Cobuild,” “we,” “us,” or “our”**) collects, uses, and shares information in connection with the Cobuild platform, including our Sites, Interfaces, and related Services.
+
+Your use of the Services is also governed by our [Terms of Service](/legal/terms) (or the Terms above, if combined).
+
+---
+
+## 1. High‑Level Summary
+
+- Cobuild is a U.S.‑based company operating non‑custodial tools for onchain coordination and continuous funding.
+- The underlying protocols (for example, revnets, Juicebox, Flows contracts) are permissionless and generally not governed by Cobuild.
+- We do **not** require user accounts to use core onchain features and aim to collect **minimal personal data**.
+- We primarily process:
+  - **Public blockchain data** (for example, wallet addresses, transactions); and
+  - Limited technical telemetry (for example, device and browser info) to operate and improve the Services.
+- If you choose to give us contact details (for example, email for updates), we use them only for the stated purpose and you can unsubscribe at any time.
+- We do **not** sell your personal data or share it for cross‑context behavioural advertising.
+- You have privacy rights under GDPR, CCPA/CPRA, and similar laws, which we respect as described below.
+- We cannot edit or delete information that is stored on public blockchains.
+
+If this Policy conflicts with the Terms on privacy/data matters, this Policy controls.
+
+---
+
+## 2. Information We Collect
+
+### 2.1 Public blockchain data
+
+When you connect a wallet or interact with Smart Contracts through the Services, we may process:
+
+- Your public wallet address(es);
+- Transaction metadata (for example, function calls, logs, token transfers);
+- Program participation data (for example, participation in Flows, Rounds, Reaction Markets); and
+- Other onchain information necessary to display balances, activity, and state.
+
+This information is **public by design** and generally visible to anyone who reads the relevant blockchains.
+
+### 2.2 Technical and usage data
+
+To operate and improve the Services, we may collect limited technical information such as:
+
+- Browser type and version, operating system, language settings;
+- Referrer URLs, pages viewed, approximate time spent;
+- Aggregated usage patterns (for example, which features are used most); and
+- Error logs and basic diagnostics.
+
+We aim to use privacy‑respecting analytics where possible (for example, avoiding third‑party tracking cookies and storing IP or similar identifiers only in a limited, security‑focused way if at all). Where feasible, we honour browser “Do Not Track” (DNT) signals.
+
+### 2.3 Information you provide directly
+
+You may choose to provide us with:
+
+- **Contact information** – such as email address or social handles, for newsletters, updates, or support.
+- **Program information** – such as application forms, grant proposals, or progress updates submitted through Cobuild‑hosted flows.
+- **Survey & research data** – if you participate in studies, we collect your responses and any optional biographical information you provide.
+- **Support communications** – contents of messages and metadata when you contact us via email, forms, or community channels.
+- **Job‑application data** – such as your name, email, resume/CV, and other information you submit when applying for a role.
+
+You are not required to provide this information to use the core non‑custodial features, but certain features (like email updates) will not work without it.
+
+### 2.4 Compliance & grant‑program data
+
+For certain programs (for example, larger grants, fiat payouts, or where required by law), we may collect additional information such as:
+
+- Full name, country of residence, and contact details;
+- Government‑issued identifiers and documents (via third‑party KYC providers);
+- Sanctions‑screening or risk‑score results; and
+- Tax or payment details required to process certain payouts.
+
+We collect and process such data **only where necessary** to:
+
+- Comply with legal or regulatory obligations (for example, AML/CTF, sanctions); or
+- Administer specific funding programs that require identity verification or eligibility checks.
+
+### 2.5 Social and AI‑related data
+
+If you connect social accounts (for example, Farcaster or X/Twitter) or enable Reaction Markets:
+
+- We may receive identifiers, profile information, public posts, and engagement metadata (for example, likes, replies, reposts) necessary to operate those features and route budgets.
+
+For AI Allocation Systems:
+
+- We may process content you post or link to (for example, updates, proposals, and public onchain data) as input to AI models to help rank, score, or group proposals and builders.
+
+We use such data only to operate allocation features and improve model performance, not to build behavioural advertising profiles.
+
+---
+
+## 3. How We Use Information
+
+We use the information described above to:
+
+1. **Provide and operate the Services**
+   - Display onchain data (for example, balances, Flows, Rounds, Reaction Markets);
+   - Facilitate program participation and allocation;
+   - Run Reaction Markets and social‑driven micro‑buys; and
+   - Operate Smart‑Contract tooling and interfaces.
+
+2. **Maintain security & integrity**
+   - Detect, prevent, and respond to fraud, abuse, and security incidents;
+   - Screen wallet addresses or transactions for known illicit activity using analytics providers;
+   - Enforce our Terms, including prohibitions on abuse and gaming.
+
+3. **Improve and develop the Services**
+   - Analyse aggregated usage patterns and UX flows;
+   - Debug issues and improve reliability and performance;
+   - Train or tune AI Allocation Systems for better ranking and filtering, using appropriate safeguards.
+
+4. **Communicate with you**
+   - Respond to support requests or inquiries;
+   - Send service announcements, security notices, and program‑related messages;
+   - Send marketing or product updates if you have opted in (you may unsubscribe at any time).
+
+5. **Comply with legal obligations**
+   - Meet KYC/AML/sanctions and other compliance requirements where applicable;
+   - Respond to lawful requests from regulators, law enforcement, and courts; and
+   - Maintain appropriate records.
+
+6. **Research & aggregated insights**
+   - Produce aggregated or de‑identified statistics about how users interact with the Services, which we may use internally or share publicly (for example, in blog posts or docs).
+
+Where required by law (for example, under GDPR), our legal bases for processing may include:
+
+- Performance of a contract (for example, providing the Services you use);
+- Our legitimate interests (for example, improving and securing the Services);
+- Compliance with legal obligations; and
+- Your consent, where we rely on it (for example, certain marketing communications).
+
+---
+
+## 4. How We Share Information
+
+We do **not** sell your personal information and do not share it for cross‑context behavioural advertising. We may share information as follows:
+
+1. **Service providers**
+
+   With third‑party vendors under appropriate contracts who provide services such as:
+   - Hosting and infrastructure;
+   - Analytics and telemetry;
+   - Email and communication tooling;
+   - Blockchain analytics, KYC/AML, and sanctions screening; and
+   - Payment or payout processors for certain programs.
+
+2. **Affiliates**
+
+   With entities under common control with Cobuild, only where consistent with this Policy.
+
+3. **Program sponsors & partners**
+
+   In specific programs, with sponsors or partners to the extent reasonably necessary to:
+   - Verify eligibility;
+   - Administer grant or loan programs; or
+   - Coordinate publicity or reporting.
+
+4. **Legal and compliance**
+
+   With government authorities, regulators, or other parties when we believe disclosure is reasonably necessary to:
+   - Comply with a law, regulation, subpoena, or court order;
+   - Protect the rights, property, or safety of Cobuild, users, or the public; or
+   - Detect, prevent, or address fraud, security, or technical issues.
+
+5. **Business transfers**
+
+   In connection with a merger, acquisition, financing, reorganization, bankruptcy, or sale of assets, your information may be transferred as part of the transaction, subject to similar protections.
+
+6. **With your consent**
+
+   Any other time you expressly consent to a specific disclosure.
+
+We may also share **aggregated or de‑identified data** that cannot reasonably be used to identify you.
+
+---
+
+## 5. Cookies, Local Storage & Similar Technologies
+
+We and our service providers may use:
+
+- Local storage, cookies, or similar technologies to:
+  - Remember your preferences (for example, imported tokens);
+  - Maintain session state; and
+  - Support core functionality.
+
+Where we use analytics or monitoring tools, we aim to:
+
+- Minimise data collection;
+- Avoid cross‑site tracking cookies where feasible; and
+- Provide controls (for example, browser settings) to limit tracking.
+
+You can usually control cookies and similar technologies through your browser or device settings, which may affect how the Services function.
+
+---
+
+## 6. Data Security
+
+We use commercially reasonable administrative, technical, and physical safeguards to protect information within our control, such as:
+
+- Encrypted communications (for example, HTTPS);
+- Access controls and permissioning;
+- Secure development and deployment practices.
+
+However:
+
+- No system can be 100% secure; and
+- We cannot control the security of public blockchains, third‑party protocols, or your own devices and wallets.
+
+If you believe your interaction with us is no longer secure, contact us at **[security@justco.build](mailto:security@justco.build)**.
+
+---
+
+## 7. Data Retention
+
+We retain information for as long as reasonably necessary to:
+
+- Provide the Services and support ongoing use;
+- Comply with legal, tax, accounting, and reporting obligations;
+- Resolve disputes and enforce our agreements; and
+- Maintain business records consistent with our legitimate interests.
+
+Retention periods vary by data type and context. When we no longer need information for the purposes described in this Policy, we will delete or de‑identify it, unless we are required by law to retain it longer.
+
+Onchain data (for example, transactions, onchain programme state) is not controlled by Cobuild and generally **cannot be altered or deleted**.
+
+---
+
+## 8. Your Rights & Choices
+
+Depending on your jurisdiction, you may have rights including to:
+
+- **Access** the personal data we hold about you;
+- **Rectify** inaccurate or incomplete data;
+- **Delete** certain data, subject to legal exceptions;
+- **Object to** or **restrict** certain processing;
+- **Withdraw consent** where we rely on consent; and
+- **Data portability** – receive a copy of certain data in a portable format.
+
+To exercise these rights, contact **[legal@justco.build](mailto:legal@justco.build)**. We may need to verify your identity before responding. Some rights may be limited by applicable law.
+
+We cannot edit or delete data stored on public blockchains.
+
+### 8.1 GDPR (EEA, U.K., and similar jurisdictions)
+
+If you are in the EEA, U.K., or a jurisdiction with similar laws, you also have the right to lodge a complaint with your local data‑protection authority if you believe our processing violates applicable law. We encourage you to contact us first so we can try to address your concerns.
+
+### 8.2 CCPA / CPRA (California residents)
+
+If you are a California resident, you may have rights under the CCPA/CPRA, including:
+
+- The right to know what categories of personal information we collect and how we use them;
+- The right to request access to and deletion of certain information;
+- The right to correct inaccurate information; and
+- The right to non‑discrimination for exercising your rights.
+
+Cobuild does **not** sell personal information as defined under the CCPA/CPRA and does not share personal information for cross‑context behavioural advertising.
+
+You or your authorised agent may submit a request by emailing **[legal@justco.build](mailto:legal@justco.build)**. We will respond consistent with applicable law and may require additional information to verify your identity.
+
+---
+
+## 9. International Transfers
+
+Cobuild is based in the United States and may process information in the U.S. and other countries that may have different data‑protection laws than your jurisdiction.
+
+Where required (for example, under GDPR), we implement appropriate safeguards for cross‑border transfers, such as:
+
+- Standard contractual clauses; or
+- Other mechanisms permitted under applicable law.
+
+By using the Services, you acknowledge that your information may be transferred to and processed in the United States and other jurisdictions as described in this Policy.
+
+---
+
+## 10. Children’s Privacy
+
+The Services are intended for adults and are not directed to children under 13 (or older where local law requires a higher age, such as 16 under GDPR).
+
+We do not knowingly collect personal data from children under such ages. If you believe we have collected personal data from a child in violation of this Policy, please contact us at **[legal@justco.build](mailto:legal@justco.build)** and we will take appropriate steps to delete it where required.
+
+---
+
+## 11. Changes to This Policy
+
+We may update this Policy from time to time. When we do:
+
+- We will update the “Effective Date” at the top; and
+- For material changes, we will provide additional notice via the Services and, where required, seek your consent.
+
+Your continued use of the Services after an updated Policy becomes effective constitutes your acceptance of the updated Policy.
+
+---
+
+## 12. Contact Us
+
+If you have questions about this Policy or wish to exercise your privacy rights, contact us at:
+
+- **Email:** [legal@justco.build](mailto:legal@justco.build)
+- **Mail:**  
+  Just Cobuild, Co.  
+  131 Continental Dr, Suite 305  
+  Newark, DE 19713, USA

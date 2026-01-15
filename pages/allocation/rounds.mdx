@@ -1,0 +1,25 @@
+import { RoundsDemo } from "../../components/RoundsDemo";
+
+# Rounds [In-feed quadratic funding]
+
+Rounds are open-competitions for small scale work that anyone on the internet can participate in by making a post on social media.
+
+## How it works
+
+Come up with an idea for what you want to fund, people post proof of work on social media, Cobuild automatically decides the best work weighted by market signals and LLM judged qualitative rankings.
+
+<RoundsDemo />
+
+1. Write requirements and set a budget, eg: post an idea for how to improve @Cobuild
+2. Incoming posts + authors are filtered against requirements <sup>[1]</sup>
+3. An LLM compares pairs of posts, and builds an ELO like ranking
+4. Anyone that likes or comments on the post micro-buys the communities coin and sends to the builder
+5. The budget is allocated based on quadratically weighted micro-buys and the AI-driven qualitative duels
+
+Likes and retweets are no longer a fuzzy approximation for value.
+With Cobuild, your social media engagement is the fuel that funds these new-era organizations and helps them allocate capital intelligently.
+
+### Notes
+
+[1] We have some solid anti-sybil protections in place. At scale - we acknowledge the need for more robust systems where
+builders will have to put money on the line to assert they are legitimate.

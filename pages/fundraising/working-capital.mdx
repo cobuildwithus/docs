@@ -1,0 +1,44 @@
+import { FounderDumpChart } from "../../components/FounderDumpChart";
+import { SplitAllocationChart } from "../../components/SplitAllocationChart";
+import { CashOutComparisonChart } from "../../components/CashOutComparisonChart";
+import { LoanCycleChart } from "../../components/LoanCycleChart";
+
+# Working Capital [Pay the bills without selling]
+
+A major failure mode of existing token launches is how founders get working capital.
+To pay for work, teams pre‑mint huge allocations to themselves and periodically dump into their own community's bids.
+
+<FounderDumpChart />
+
+The **cleanest way for a founder to pay rent is to sell out the people who believed earliest.**
+
+## Splits
+
+Cobuild solves this dynamic.
+Each Cobuild token can specify how newly minted tokens are split: a fixed share of every new issuance is earmarked to fund builders, and that rule is locked in at deploy time.
+
+For example, with a 20% split rate, when someone buys 100 tokens, 20 tokens automatically route to builders.
+
+<SplitAllocationChart />
+
+## Cashing out
+
+When you need working capital, you can cash out against the treasury instead of dumping on the market.
+You pay a small exit tax that stays in the treasury, raising the floor for all remaining holders.
+
+<CashOutComparisonChart />
+
+Instead of selling out early believers, you get capital and everyone else's position improves.
+
+## Loans
+
+More powerfully, anyone can use their tokens as collateral for loans instead of market‑selling.
+Cobuild natively enables loans backed by each token's treasury.
+
+<LoanCycleChart />
+
+Lock your tokens, take cash from the treasury, use it for a year or two to fund operations, pay back the loan, and your original tokens return to your wallet. You never lost your position. You never sold anything.
+
+As a builder, you mortgage your future contribution to the network, not your community's trust. The interest paid on those loans feeds back into the treasury, nudging the floor higher for all holders.
+
+For a deeper dive into builder economics—how splits compound, when to cash out vs borrow, and optimal strategies—see [Builders](/economics/builders).

@@ -1,0 +1,52 @@
+# Flows [Recursive streaming grants]
+
+import { TCRDemo } from "../../components/TCRDemo";
+import { FlowsDemo } from "../../components/FlowsDemo";
+
+Flows is our "always‑on" grants system: instead of one‑off payouts, it turns a budget into a stream of money for people doing continuous grassroots work.
+
+## How it works
+
+Each flow is a curated list of builders plus a monthly budget.
+Tokens stream out every second to builders on the list—no waiting for milestone reviews or batch payouts.
+
+<FlowsDemo />
+
+## Eligibility
+
+Builders apply with a short pitch and a small application fee.
+Once accepted, they start receiving a continuous stipend and are expected to post clear, public progress updates (usually on Farcaster) instead of filling out heavy grant reports.
+
+We use a **Token Curated Registry (TCR)** to maintain who's in each flow.
+Anyone can challenge a builder's eligibility by staking tokens; if the challenge succeeds (decided by token-holder vote), the builder is removed and the challenger earns a portion of the builder's stake.
+If it fails, the challenger loses their stake to the builder.
+
+<TCRDemo />
+
+Applying or challenging requires buying the community's token.
+When the flow funds impactful work, the token attracts more buyers and holders earn more, so everyone has skin in the game to curate well.
+
+Bad actors get slashed out quickly, legitimate builders are protected by the cost of frivolous challenges, and the registry self-corrects without needing a central gatekeeper.
+
+## Baseline vs Bonus
+
+Sponsors put capital into a flow; that capital is split into two parts: a **baseline** pool that gives every accepted builder an equal share, and a **bonus** pool tilted toward builders that are having outsized impact.
+
+The baseline keeps things fair and predictable; the bonus lets the crowd express strong preferences without a central committee.
+Over time, good work gets more stream, stalled work loses it, and the money keeps moving toward people actually shipping.
+
+## Deciding Bonus Allocations
+
+Instead of token voting deciding the bonus pool allocation, we use LLM-driven pairwise duels to weight grants against each other.
+
+In addition, anyone that likes or comments on a builder's update micro-buys the community's token and sends it to the builder. This creates a direct link between visible contribution and compensation.
+
+These micro-transactions are quadratically weighted when calculating bonus allocations—many small endorsements from different people count more than a few large ones. This rewards builders who earn broad community recognition over those who simply have a few wealthy supporters.
+
+Bonus allocations update weekly based on these two signals.
+
+## Prior Success
+
+We ran Flows [already](https://www.nouns.camp/proposals/697) with Nouns DAO, paying over 250 builders from a $200k pot across 6 months.
+94% made real impact; only 6% rugged, and because funds streamed rather than paid in lump sums, losses stayed minimal.
+Builders also loved getting a small stipend up front they could immediately put to work: booking a venue, buying supplies, or kicking off production.
