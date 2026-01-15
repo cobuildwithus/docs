@@ -28,6 +28,21 @@ Preview the production build:
 pnpm preview
 ```
 
+## OpenAI File Search Upload
+
+Upload docs files into an OpenAI vector store for file search:
+
+```bash
+OPENAI_API_KEY=... DOCS_VECTOR_STORE_ID=... pnpm upload-docs
+```
+
+Flags:
+
+```bash
+pnpm upload-docs -- --purge
+pnpm upload-docs -- --vector-store-id=vs_...
+```
+
 ## License
 
 MIT. See `LICENSE`. Third-party licenses are in `licenses/`.
