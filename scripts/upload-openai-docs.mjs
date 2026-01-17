@@ -1,6 +1,9 @@
 #!/usr/bin/env node
+import dotenv from "dotenv";
 import fs from "node:fs/promises";
 import path from "node:path";
+
+dotenv.config({ override: true });
 
 const args = process.argv.slice(2);
 const shouldPurge = args.includes("--purge");
@@ -20,11 +23,15 @@ const headers = {
   Authorization: `Bearer ${apiKey}`,
 };
 
-if (process.env.OPENAI_ORGANIZATION?.trim()) {
-  headers["OpenAI-Organization"] = process.env.OPENAI_ORGANIZATION.trim();
+const openAiOrg = process.env.OPENAI_ORGANIZATION?.trim();
+const openAiProject = process.env.OPENAI_PROJECT?.trim();
+
+console.log(`Using OpenAI key: ${maskApiKey(apiKey)}`);
+if (openAiOrg) {
+  headers["OpenAI-Organization"] = openAiOrg;
 }
-if (process.env.OPENAI_PROJECT?.trim()) {
-  headers["OpenAI-Project"] = process.env.OPENAI_PROJECT.trim();
+if (openAiProject) {
+  headers["OpenAI-Project"] = openAiProject;
 }
 
 const vectorHeaders = {
@@ -33,13 +40,47 @@ const vectorHeaders = {
   "OpenAI-Beta": "assistants=v2",
 };
 
+const EXCLUDED_DOC_PATHS = new Set([
+  "legal/privacy.mdx",
+  "legal/terms.mdx",
+  "legal/privacy.md",
+  "legal/terms.md",
+]);
+
 const docsRoot = path.join(process.cwd(), "pages");
 const client = createOpenAIClient({ baseUrl, headers, vectorHeaders });
 
-const docFiles = (await collectDocFiles(docsRoot)).sort();
+const allDocFiles = (await collectDocFiles(docsRoot)).sort();
+const excludedDocFiles = allDocFiles.filter((filePath) => isExcludedDoc(filePath, docsRoot));
+const docFiles = allDocFiles.filter((filePath) => !isExcludedDoc(filePath, docsRoot));
+if (excludedDocFiles.length > 0) {
+  const excludedList = excludedDocFiles
+    .map((filePath) => path.relative(docsRoot, filePath).replace(/\\/g, "/"))
+    .join(", ");
+  console.log(`Skipping excluded docs: ${excludedList}`);
+}
 if (docFiles.length === 0) {
   console.error("No docs files found under ./pages.");
   process.exit(1);
+}
+
+if (openAiOrg) console.log(`Using OpenAI org: ${openAiOrg}`);
+if (openAiProject) console.log(`Using OpenAI project: ${openAiProject}`);
+
+if (vectorStoreId) {
+  const knownStores = await client.listVectorStores();
+  const found = knownStores.find((store) => store.id === vectorStoreId);
+  if (!found) {
+    const preview = knownStores
+      .slice(0, 10)
+      .map((store) => `${store.name ?? "unnamed"} (${store.id})`)
+      .join(", ");
+    const suffix = knownStores.length > 10 ? "…" : "";
+    throw new Error(
+      `Vector store ${vectorStoreId} not found for this API key/project. ` +
+        `Available: ${preview || "none"}${suffix}`,
+    );
+  }
 }
 
 const activeVectorStoreId = vectorStoreId || (await client.createVectorStore("Cobuild Docs"));
@@ -83,6 +124,14 @@ function getArgValue(argv, flag) {
   return entry ? entry.slice(prefix.length).trim() : null;
 }
 
+function maskApiKey(value) {
+  const trimmed = value.trim();
+  if (trimmed.length <= 8) return "***";
+  const start = trimmed.slice(0, 3);
+  const end = trimmed.slice(-4);
+  return `${start}...${end}`;
+}
+
 function pickSingle(items) {
   if (!items || items.length !== 1) return null;
   return items[0];
@@ -105,6 +154,11 @@ async function collectDocFiles(dir) {
 function isDocFile(name) {
   const ext = path.extname(name).toLowerCase();
   return ext === ".md" || ext === ".mdx";
+}
+
+function isExcludedDoc(filePath, docsRoot) {
+  const relativePath = path.relative(docsRoot, filePath).replace(/\\/g, "/");
+  return EXCLUDED_DOC_PATHS.has(relativePath);
 }
 
 function toSlug(relativePath) {
@@ -161,6 +215,24 @@ function createOpenAIClient({ baseUrl, headers, vectorHeaders }) {
         fileId: item.file_id ?? item.id,
         attributes: item.attributes ?? null,
         filename: null,
+      }));
+    },
+    async listVectorStores() {
+      const results = [];
+      let after = null;
+      do {
+        const params = new URLSearchParams({ limit: "100" });
+        if (after) params.set("after", after);
+        const data = await requestJson(`${baseUrl}/vector_stores?${params.toString()}`, {
+          headers: vectorHeaders,
+        });
+        const batch = Array.isArray(data?.data) ? data.data : [];
+        results.push(...batch);
+        after = data?.has_more ? data?.last_id : null;
+      } while (after);
+      return results.map((item) => ({
+        id: item.id,
+        name: item.name ?? null,
       }));
     },
     async retrieveVectorStoreFile(vectorStoreId, vectorStoreFileId) {

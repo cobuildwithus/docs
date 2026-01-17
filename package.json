@@ -11,6 +11,7 @@
     "upload-docs": "node scripts/upload-openai-docs.mjs"
   },
   "dependencies": {
+    "dotenv": "^16.4.5",
     "react": "latest",
     "react-dom": "latest",
     "recharts": "^2.15.0",
