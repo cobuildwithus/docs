@@ -37,11 +37,20 @@ Optional hardening: set `SELF_HOSTED_SHARED_SECRET` and require callers to send 
 - **Postgres**: chat + message storage.
 - **Redis**: caching and rate limiting.
 
+## Built with
+
+- Fastify (HTTP server)
+- Drizzle ORM + Postgres
+- Redis
+- Vercel AI SDK + OpenAI Responses API
+- Zod
+- Neynar SDK (optional Farcaster tools)
+
 ## Minimal database schema
 
 The repo includes a minimal migration you can apply directly:
 
-- `migrations/0001_minimal_chat.sql`
+- [migrations/0001_minimal_chat.sql](https://github.com/cobuildwithus/chat-api/blob/main/migrations/0001_minimal_chat.sql)
 
 Run it with:
 
@@ -61,5 +70,11 @@ At a minimum you’ll need:
 - `CHAT_GRANT_SECRET`
 
 Privy config is required unless you use self-hosted mode.
+
+Generate a `CHAT_GRANT_SECRET` with:
+
+```bash
+openssl rand -hex 32
+```
 
 For full setup, env variables, and deployment tips, follow the README in the repo.

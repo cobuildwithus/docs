@@ -124,7 +124,11 @@ export default defineConfig({
     },
     {
       text: "Self Hosted",
-      items: [{ text: "Chat API", link: "/self-hosted/chat-api" }],
+      collapsed: true,
+      items: [
+        { text: "Introduction", link: "/self-hosted" },
+        { text: "Chat API", link: "/self-hosted/chat-api" },
+      ],
     },
   ],
 });
