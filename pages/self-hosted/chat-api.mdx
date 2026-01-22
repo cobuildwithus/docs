@@ -1,0 +1,65 @@
+# Chat API
+
+The Chat API is a minimal chat service that powers Cobuild’s chat UX. It exposes a small HTTP surface, persists chats/messages, and optionally uses tools like Farcaster lookups.
+
+Repository: [github.com/cobuildwithus/chat-api](https://github.com/cobuildwithus/chat-api)
+
+## What it does
+
+- Streams chat responses from the configured model.
+- Creates and lists chats, and fetches chat history by ID.
+- Persists chats/messages in Postgres and uses Redis for caching/rate limits.
+- Supports optional Farcaster tools (Neynar API key).
+
+## Endpoints
+
+- `POST /api/chat` (streaming chat)
+- `POST /api/chat/new` (create chat)
+- `GET /api/chats` (list chats)
+- `GET /api/chat/:chatId` (read chat)
+
+## Auth modes
+
+### Privy (default)
+
+Provide a `privy-id-token` header on requests. The API resolves the user address via Privy.
+
+### Self-hosted mode
+
+Set `SELF_HOSTED_MODE=true` and either:
+- Send `x-chat-user: <evm_address>` per request, or
+- Set `SELF_HOSTED_DEFAULT_ADDRESS` once and omit the header.
+
+Optional hardening: set `SELF_HOSTED_SHARED_SECRET` and require callers to send `x-chat-auth`.
+
+## Data stores
+
+- **Postgres**: chat + message storage.
+- **Redis**: caching and rate limiting.
+
+## Minimal database schema
+
+The repo includes a minimal migration you can apply directly:
+
+- `migrations/0001_minimal_chat.sql`
+
+Run it with:
+
+```bash
+psql "$COBUILD_POSTGRES_URL" -f migrations/0001_minimal_chat.sql
+```
+
+The migration also creates a minimal `farcaster.profiles` table for the `getUser` tool. You can leave it empty if you don’t use Farcaster tools.
+
+## Required configuration
+
+At a minimum you’ll need:
+
+- `COBUILD_POSTGRES_URL`
+- `COBUILD_REDIS_URL`
+- `OPENAI_API_KEY`
+- `CHAT_GRANT_SECRET`
+
+Privy config is required unless you use self-hosted mode.
+
+For full setup, env variables, and deployment tips, follow the README in the repo.

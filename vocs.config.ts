@@ -122,5 +122,9 @@ export default defineConfig({
         { text: "Failure Modes", link: "/economics/failure-modes" },
       ],
     },
+    {
+      text: "Self Hosted",
+      items: [{ text: "Chat API", link: "/self-hosted/chat-api" }],
+    },
   ],
 });
