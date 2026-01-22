@@ -123,11 +123,12 @@ export default defineConfig({
       ],
     },
     {
-      text: "Self Hosted",
+      text: "Open Infra",
       collapsed: true,
       items: [
         { text: "Introduction", link: "/self-hosted" },
         { text: "Chat API", link: "/self-hosted/chat-api" },
+        { text: "Docs", link: "/self-hosted/docs" },
       ],
     },
   ],

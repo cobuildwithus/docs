@@ -37,6 +37,10 @@ Optional hardening: set `SELF_HOSTED_SHARED_SECRET` and require callers to send 
 - **Postgres**: chat + message storage.
 - **Redis**: caching and rate limiting.
 
+## Docs tool (optional)
+
+If you enable the docs search tool, populate an OpenAI vector store with the Cobuild docs and point the tool at that store ID. The docs repo includes a script to pull and upload all pages into a vector store; follow the steps on [Docs Repo](/self-hosted/docs) to generate the vector store and keep it updated.
+
 ## Built with
 
 - Fastify (HTTP server)

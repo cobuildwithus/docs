@@ -1,0 +1,45 @@
+# Docs Repo
+
+This repo powers the Cobuild documentation site (built with Vocs).
+
+Repository: [github.com/cobuildwithus/cobuild-docs](https://github.com/cobuildwithus/cobuild-docs)
+
+## Local development
+
+```bash
+pnpm install
+pnpm dev
+```
+
+## Build + deploy
+
+```bash
+pnpm build
+pnpm preview
+```
+
+Deploy the static output to your hosting provider of choice.
+
+## Populate the docs search vector store
+
+If you use the Chat API’s docs tool, you can upload these docs into an OpenAI vector store and point the tool at that store ID.
+
+The repo includes an upload script that collects all `.md`/`.mdx` files under `pages/` (excluding legal pages) and pushes them to a vector store.
+
+```bash
+OPENAI_API_KEY=... DOCS_VECTOR_STORE_ID=... pnpm upload-docs
+```
+
+Notes:
+
+- Omit `DOCS_VECTOR_STORE_ID` to create a new store (named “Cobuild Docs”).
+- Add `--purge` to remove existing vector store files before re-uploading.
+- Add `--vector-store-id=vs_...` to target a specific store.
+- Add `--keep-files` to keep underlying file objects after purge.
+- Optional headers: `OPENAI_ORGANIZATION` and `OPENAI_PROJECT` are supported.
+
+Once uploaded, configure the Chat API docs tool with the resulting vector store ID so it can power docs search.
+
+## LLM-friendly exports
+
+We publish `llms.txt` and the full-text export (`llms-full.txt`) on docs.co.build. The canonical entrypoint is `docs.co.build/llms.txt`.
