@@ -1,0 +1,127 @@
+# Problems with coin voting [Treasury decisions]
+
+Token-holder voting is not bad in the abstract. It is bad at a specific job: frequent, high-context, high-adversarial capital allocation decisions (treasury spends, grants, investments, and protocol-owned liquidity). In that setting, voting power is liquid and concentrated, and most voters are rationally uninformed. The failure modes compound.
+
+## Why treasury votes break in practice
+
+### Participation gaps
+
+*Low participation means the median holder does not govern.*
+
+Empirical work on major DAOs finds that only a small fraction of tokens participates in votes, which means outcomes are determined by a narrow subset of holders or delegates. Dotan et al. report mean voting participation as a percentage of circulating supply in single digits for major protocols: **3.67% (Aave), 6.41% (Uniswap), 11.21% (Compound)**.<sup>[1]</sup> Fritsch et al. find that on average less than 10% of total tokens participate in votes. A separate analysis of **4,963 voting events** concludes DAOs are "inherently susceptible" to low voter participation, which centralizes power and undermines democratic framing.<sup>[2]</sup>
+
+Vitalik frames this as a tragedy-of-the-commons dynamic: small holders have little incentive to research or vote because each has insignificant influence, which pushes effective control toward whales and organized blocs.<sup>[3][4]</sup>
+
+**Why it matters for spending:** treasury decisions are the most attractive targets for motivated minorities and attackers because they can directly route assets.
+
+### Rational ignorance
+
+*Rational ignorance is structural.*
+
+Diligent treasury voting requires real work: diligence, ROI modeling, risk assessment, and contract review. For most token holders, the expected benefit of deep research is tiny, while the cost is real. Data backs this: participation drops when it is more expensive to vote (for example, when gas costs rise).<sup>[1]</sup>
+
+### Wealth concentration
+
+*Token voting is plutocratic by design, and concentration grows over time.*
+
+If voting power is proportional to tokens, governance trends toward wealth-weighted rule. Fritsch et al. find **extreme inequality** in voting power: Gini coefficients for delegates approach **0.99 for Compound and Uniswap**. Using a Nakamoto-style measure (the minimum number of delegates that can control >50% of voting power), they report **8 for Compound, 11 for Uniswap, and 18 for ENS**. Barbereau et al. study nine major DeFi projects and conclude voting rights are highly concentrated and exercised by very few holders, interpreting the likely outcome as minority rule.<sup>[5]</sup>
+
+This also narrows governance toward coin-holder interests (often short-horizon price concerns) and away from broader stakeholder goals. Vitalik notes that coin voting "empowers coin holders… at the expense of other parts of the community" and tends to overvalue making the coin price go up, "even if that involves harmful rent extraction."<sup>[3]</sup> This is especially distorting for public goods or ecosystem spending.
+
+### Liquid voting power
+
+*Voting power is liquid and borrowable.*
+
+Token voting inherits the risks of transferable voting power. The 2022 Beanstalk exploit is a canonical example: a flash loan provided temporary voting power to pass a malicious proposal that drained **~$182 million** from the protocol, with the governance mechanism as the root cause.<sup>[6]</sup>
+
+Vitalik treats vote-buying as a structural vulnerability and calls it the "dangerous elephant in the room," noting he sees "no solution within the current coin-voting paradigm." His core reasoning: a governance token bundles an economic interest and the right to participate in governance. While this is intended to align power and responsibility, the bundle is easy to unbundle in practice. He gives a concrete construction: a wrapper contract that holds tokens and auctions off governance rights, paying proceeds back to depositors. Small holders are especially incentivized to sell governance rights because they bear only a small fraction of the downside from bad governance while capturing their share of the upside from selling the vote power.<sup>[3][4]</sup>
+
+### Bribery markets
+
+*Vote-buying has become industrialized.*
+
+Once token votes decide valuable outcomes, it becomes natural to pay voters to vote a certain way. This can happen informally (private deals) or through formal marketplaces. The veToken ecosystem (Curve/Convex/Votium) provides a clear example: Lloyd et al. find that voting behavior follows bribes set by higher-level protocols, and voting markets can largely determine outcomes. Votium's incentivization heavily shapes Convex's recurring gauge votes.
+
+**The circular trap:** spending decisions create the budget to bribe with. If a proposal can send $10 million to a counterparty, that counterparty can afford to pay meaningful bribes to pass it. Treasury extraction funds more bribery, which enables more treasury extraction. This is the self-reinforcing failure mode that makes treasury votes uniquely corrosive.
+
+A USENIX Security 2025 paper on "Voting-Bloc Entropy" treats vote-buying and bribery as centralizing forces that align voters around the briber's dictated choice, reducing effective decentralization. The research catalogs vote-buying services and bribe marketplaces that let passive holders monetize voting power while buyers obtain influence quickly.
+
+### Complexity risk
+
+*Complexity becomes an attack surface.*
+
+Treasury proposals are complex and often hard to verify. Research on DeFi governance notes that proposal descriptions can be misleading and that verifying contract changes is difficult for ordinary users, allowing bad proposals to pass.<sup>[1]</sup>
+
+A 2024 controversy at Compound illustrates this risk without requiring an outright exploit: a proposal allocating **~$24 million worth of COMP (~5% of the treasury)** to a yield strategy controlled by a specific group passed after new delegations helped reach quorum. Critics framed it as a governance attack and tunneling risk. Whether or not every such case is theft, the structural point holds: treasury votes are the natural focal point for governance extraction.<sup>[7]</sup>
+
+### Politics and burnout
+
+*Politics and burnout reduce vigilance over time.*
+
+Frequent, public decisions create social-game dynamics and decision fatigue. Over time, serious participation drops and the remaining active set becomes easier to coordinate, bribe, or pressure.<sup>[4]</sup>
+
+### Diffuse accountability
+
+*Accountability is diffuse.*
+
+Voters are collectively exposed to bad outcomes but individually not responsible, which lowers the cost of being wrong and makes low-effort voting rational.<sup>[3]</sup>
+
+---
+
+## Why treasury is the worst place for token voting
+
+The failures above are not independent. They compound specifically in treasury contexts, creating a failure mode more severe than any single issue suggests.
+
+### The problem structure
+
+Treasury decisions sit at the intersection of five properties that token voting handles poorly:
+
+1. **High adversarial incentive.** Treasury votes have a direct profit path: route funds to yourself. This attracts sophisticated attackers in ways that parameter votes do not.
+
+2. **High complexity.** Evaluating spend proposals requires diligence, risk assessment, and contract verification. Voters cannot catch what they cannot evaluate—complexity becomes a security vulnerability.
+
+3. **High frequency.** Grants, vendors, partnerships, and payroll create a continuous stream of decisions. Each vote is an attack surface; frequent votes accelerate burnout.
+
+4. **Speed requirements.** Opportunities do not wait for governance cycles. The tension between deliberation and execution pressures DAOs toward either missed opportunities or rushed votes.
+
+5. **Discretion requirements.** Negotiations and personnel decisions require confidentiality. Fully public governance turns every spend into a social game.
+
+Token voting struggles when any one of these is present. Treasury decisions combine all five.
+
+### The compounding dynamic
+
+Each failure makes the others worse. Low participation increases the power of bribes. Complexity makes rational ignorance more rational. Concentrated voting power makes bribery cheaper per unit of influence. The result is not a system with several independent weaknesses but a system where the weaknesses reinforce each other.
+
+### The convex problem mismatch
+
+Vitalik frames governance design around a distinction between **convex** and **concave** problems:
+
+- **Concave problems** are those where compromise or the median outcome is better than random selection. For these, you want robustness and anti-capture mechanisms.
+- **Convex problems** are those where a few bold bets matter more than averaging. For these, you want decisive action with accountability.
+
+Treasury deployment is often convex. A few high-quality grants or investments can transform an ecosystem; a hundred mediocre ones accomplish little. But token voting tends to produce either:
+
+- **Noisy popularity contests** where proposals win based on narrative rather than merit, resulting in low-information compromise, or
+- **De facto control by concentrated blocs** (whales, delegate cartels, bribe markets) that optimize for extraction rather than ecosystem value.
+
+Neither output matches what capital allocation requires. The mechanism is misaligned with the problem structure.
+
+### The takeaway
+
+Token voting is not bad in general. It can serve as a legitimacy layer, a veto mechanism, or a way to ratify high-level strategic direction. But for **frequent, high-context, high-stakes capital allocation**—the core function of treasury management—it is a poor default.
+
+## References
+
+[1] <a href="https://ar5iv.org/pdf/2308.04267" target="_blank" className="vocs_Anchor vocs_Link vocs_Link_accent_underlined">The Vulnerable Nature of Decentralized Governance in DeFi</a> - Dotan et al. empirical analysis of participation rates, gas price effects, and proposal complexity in DeFi governance.
+
+[2] <a href="https://papers.ssrn.com/sol3/Delivery.cfm/4441178.pdf?abstractid=4441178&mirid=1&type=2" target="_blank" className="vocs_Anchor vocs_Link vocs_Link_accent_underlined">The Illusion of Democracy - Why Voting in DAOs Is Doomed to Fail</a> - NYU law/econ analysis of 4,963 voting events finding structural susceptibility to low participation and power centralization.
+
+[3] <a href="https://efdn.notion.site/Moving-beyond-coin-voting-governance-96f0cf8de2504d7b88d17380d20c84e4" target="_blank" className="vocs_Anchor vocs_Link vocs_Link_accent_underlined">Moving beyond coin voting governance</a> - Vitalik Buterin's 2021 analysis of coin-voting failure modes, vote-buying vulnerabilities, and alternative governance mechanisms.
+
+[4] <a href="https://www.reddit.com/r/ethereum/comments/1qgxapi/we_need_more_daos_but_different_and_better_daos/" target="_blank" className="vocs_Anchor vocs_Link vocs_Link_accent_underlined">We need more DAOs - but different and better DAOs</a> - Vitalik Buterin's 2024 post on governance design, decision fatigue, and the need for privacy in voting.
+
+[5] <a href="https://www.sciencedirect.com/science/article/pii/S0160791X23000568" target="_blank" className="vocs_Anchor vocs_Link vocs_Link_accent_underlined">Decentralised Finance's timocratic governance</a> - Barbereau et al. study of voting rights distribution and exercise across nine major DeFi protocols.
+
+[6] <a href="https://www.certik.com/resources/blog/revisiting-beanstalk-farms-exploit" target="_blank" className="vocs_Anchor vocs_Link vocs_Link_accent_underlined">Revisiting Beanstalk Farms Exploit</a> - CertiK post-mortem on the $182m governance exploit enabled by flash-loaned voting power.
+
+[7] <a href="https://unchainedcrypto.com/humpy-accused-of-governance-attack-on-compound-finance-dao/" target="_blank" className="vocs_Anchor vocs_Link vocs_Link_accent_underlined">DAO Delegate Group Accused of Governance Attack on Compound Finance</a> - Coverage of the 2024 Compound controversy involving ~$24m allocation and governance capture concerns.

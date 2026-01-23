@@ -109,6 +109,13 @@ export default defineConfig({
       ],
     },
     {
+      text: "DAO",
+      items: [
+        { text: "Introduction", link: "/dao" },
+        { text: "Problems with coins", link: "/dao/problems-with-coins" },
+      ],
+    },
+    {
       text: "Token Economics",
       collapsed: true,
       items: [
