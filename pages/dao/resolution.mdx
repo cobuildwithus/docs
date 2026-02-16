@@ -1,0 +1,110 @@
+# Resolution, failure, recycling
+
+Cobuild has two resolution layers:
+
+- Budget resolution (success / failure / expiry)
+- Goal resolution (success / expiry/failure)
+
+All resolution is oracleable and challengeable.
+Default oracle: UMA Optimistic Oracle.
+
+## Budget lifecycle
+
+### States (conceptual)
+- `Listed` (in Budget_TCR)
+- `Funding` (receiving funds; not activated)
+- `Active` (activated; can spend to mechanisms)
+- `Succeeded` / `Failed` / `Expired`
+- `Slashed` (invariant breach)
+
+**Definitions:**
+- **Expired:** funding or execution window ends without a success assertion.
+- **Failed:** an explicit failure assertion resolves as true.
+
+### Activation and timing
+- A budget activates when `treasuryBalance >= activationThreshold` (aka `minBudget`) for the first time
+- execution timer starts at activation:
+  - `executionEnd = activationTime + executionDuration`
+- A budget must activate by `fundingDeadline`
+  - if not, it expires
+
+## Budget success
+
+When the oracle confirms Budget success:
+
+1) **Stop upstream streaming** into the budget (rate becomes 0)
+2) **Stop or unwind downstream streams** as defined by budget rules
+   - see mechanism specs (Flow/Round) for how unwinding works
+3) **Finalize reward points** for budget underwriters (rewards.md)
+4) **Unlock staker principal for reuse within this Goal**
+   - users can re-stake to other budgets
+   - principal is still locked inside the Goal until Goal resolution
+5) **Recycle funds**
+   - unspent budget funds MAY be returned to the Goal treasury (recommended default)
+
+## Budget failure / expiry (no invariant breach)
+
+If a budget fails its success condition or expires:
+
+- upstream streaming stops
+- **no rewards** accrue from this budget
+- staker principal unlocks for reuse within this Goal
+- unspent funds return upward to the Goal treasury
+
+This matches the policy:
+
+> budget fails but didn’t break rules → no rewards, but principal returned (opportunity cost is the penalty)
+
+## Invariants and slashing
+
+Budgets can specify `invariants` (must-not-do constraints).
+Examples:
+- “funds must only go to addresses that passed X”
+- “must not pay more than Y to category Z”
+- “must not spend outside the listed mechanisms”
+
+### What triggers slashing?
+A slashing event occurs only if:
+- an invariant breach is proven via the dispute/oracle process, OR
+- a listing is found invalid via TCR dispute resolution (if you choose to slash on invalid listing)
+
+### Where does slashed value go?
+This is parameterized, but recommended destinations are:
+- compensate challengers / reporters
+- optionally top up the Goal treasury or reward pool
+
+(Keep slashing for clear rule-breaking, not close-call outcomes.)
+
+## Goal resolution
+
+### Goal success
+When the oracle confirms Goal success before its deadline:
+
+- the reward escrow unlocks
+- reward points become redeemable for the reward pool
+- staker principals become withdrawable (Goal lock ends)
+
+### Goal expiry / failure (default behavior)
+If the deadline passes without success:
+
+- all streaming stops
+- reward points become non-redeemable (0)
+- staker principals become withdrawable (Goal lock ends)
+- remaining treasury funds follow Goal policy (refund / rollover / governance)
+  - the protocol can define a default, or leave it to governance
+
+### Goal funding threshold
+If the Goal does not reach its `minRaise` by `raiseDeadline`:
+
+- contributions can automatically return to contributors
+- the Goal is considered inactive and streaming does not proceed
+
+This preserves the “final claim gate” alignment:
+rewards only exist if the Goal succeeds.
+
+## Who can call resolution?
+Typically:
+- anyone can assert success/failure
+- anyone can dispute within the oracle’s liveness window
+
+This keeps resolution permissionless while still dispute-protected.

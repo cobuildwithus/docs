@@ -6,7 +6,7 @@ Token-holder voting is not bad in the abstract. It is bad at a specific job: fre
 
 ### Participation gaps
 
-*Low participation means the median holder does not govern.*
+_Low participation means the median holder does not govern._
 
 Empirical work on major DAOs finds that only a small fraction of tokens participates in votes, which means outcomes are determined by a narrow subset of holders or delegates. Dotan et al. report mean voting participation as a percentage of circulating supply in single digits for major protocols: **3.67% (Aave), 6.41% (Uniswap), 11.21% (Compound)**.<sup>[1]</sup> Fritsch et al. find that on average less than 10% of total tokens participate in votes. A separate analysis of **4,963 voting events** concludes DAOs are "inherently susceptible" to low voter participation, which centralizes power and undermines democratic framing.<sup>[2]</sup>
 
@@ -16,13 +16,13 @@ Vitalik frames this as a tragedy-of-the-commons dynamic: small holders have litt
 
 ### Rational ignorance
 
-*Rational ignorance is structural.*
+_Rational ignorance is structural._
 
 Diligent treasury voting requires real work: diligence, ROI modeling, risk assessment, and contract review. For most token holders, the expected benefit of deep research is tiny, while the cost is real. Data backs this: participation drops when it is more expensive to vote (for example, when gas costs rise).<sup>[1]</sup>
 
 ### Wealth concentration
 
-*Token voting is plutocratic by design, and concentration grows over time.*
+_Token voting is plutocratic by design, and concentration grows over time._
 
 If voting power is proportional to tokens, governance trends toward wealth-weighted rule. Fritsch et al. find **extreme inequality** in voting power: Gini coefficients for delegates approach **0.99 for Compound and Uniswap**. Using a Nakamoto-style measure (the minimum number of delegates that can control >50% of voting power), they report **8 for Compound, 11 for Uniswap, and 18 for ENS**. Barbereau et al. study nine major DeFi projects and conclude voting rights are highly concentrated and exercised by very few holders, interpreting the likely outcome as minority rule.<sup>[5]</sup>
 
@@ -30,7 +30,7 @@ This also narrows governance toward coin-holder interests (often short-horizon p
 
 ### Liquid voting power
 
-*Voting power is liquid and borrowable.*
+_Voting power is liquid and borrowable._
 
 Token voting inherits the risks of transferable voting power. The 2022 Beanstalk exploit is a canonical example: a flash loan provided temporary voting power to pass a malicious proposal that drained **~$182 million** from the protocol, with the governance mechanism as the root cause.<sup>[6]</sup>
 
@@ -38,7 +38,7 @@ Vitalik treats vote-buying as a structural vulnerability and calls it the "dange
 
 ### Bribery markets
 
-*Vote-buying has become industrialized.*
+_Vote-buying has become industrialized._
 
 Once token votes decide valuable outcomes, it becomes natural to pay voters to vote a certain way. This can happen informally (private deals) or through formal marketplaces. The veToken ecosystem (Curve/Convex/Votium) provides a clear example: Lloyd et al. find that voting behavior follows bribes set by higher-level protocols, and voting markets can largely determine outcomes. Votium's incentivization heavily shapes Convex's recurring gauge votes.
 
@@ -48,7 +48,7 @@ A USENIX Security 2025 paper on "Voting-Bloc Entropy" treats vote-buying and bri
 
 ### Complexity risk
 
-*Complexity becomes an attack surface.*
+_Complexity becomes an attack surface._
 
 Treasury proposals are complex and often hard to verify. Research on DeFi governance notes that proposal descriptions can be misleading and that verifying contract changes is difficult for ordinary users, allowing bad proposals to pass.<sup>[1]</sup>
 
@@ -56,17 +56,15 @@ A 2024 controversy at Compound illustrates this risk without requiring an outrig
 
 ### Politics and burnout
 
-*Politics and burnout reduce vigilance over time.*
+_Politics and burnout reduce vigilance over time._
 
 Frequent, public decisions create social-game dynamics and decision fatigue. Over time, serious participation drops and the remaining active set becomes easier to coordinate, bribe, or pressure.<sup>[4]</sup>
 
 ### Diffuse accountability
 
-*Accountability is diffuse.*
+_Accountability is diffuse._
 
 Voters are collectively exposed to bad outcomes but individually not responsible, which lowers the cost of being wrong and makes low-effort voting rational.<sup>[3]</sup>
-
----
 
 ## Why treasury is the worst place for token voting
 
@@ -91,20 +89,6 @@ Token voting struggles when any one of these is present. Treasury decisions comb
 ### The compounding dynamic
 
 Each failure makes the others worse. Low participation increases the power of bribes. Complexity makes rational ignorance more rational. Concentrated voting power makes bribery cheaper per unit of influence. The result is not a system with several independent weaknesses but a system where the weaknesses reinforce each other.
-
-### The convex problem mismatch
-
-Vitalik frames governance design around a distinction between **convex** and **concave** problems:
-
-- **Concave problems** are those where compromise or the median outcome is better than random selection. For these, you want robustness and anti-capture mechanisms.
-- **Convex problems** are those where a few bold bets matter more than averaging. For these, you want decisive action with accountability.
-
-Treasury deployment is often convex. A few high-quality grants or investments can transform an ecosystem; a hundred mediocre ones accomplish little. But token voting tends to produce either:
-
-- **Noisy popularity contests** where proposals win based on narrative rather than merit, resulting in low-information compromise, or
-- **De facto control by concentrated blocs** (whales, delegate cartels, bribe markets) that optimize for extraction rather than ecosystem value.
-
-Neither output matches what capital allocation requires. The mechanism is misaligned with the problem structure.
 
 ### The takeaway
 

@@ -111,7 +111,16 @@ export default defineConfig({
     {
       text: "DAO",
       items: [
-        { text: "Introduction", link: "/dao" },
+        { text: "How it works", link: "/dao" },
+        { text: "Core concepts", link: "/dao/core-concepts" },
+        { text: "Registries (TCRs)", link: "/dao/registries" },
+        { text: "Streaming & safety rails", link: "/dao/streaming" },
+        { text: "Rewards & conviction", link: "/dao/rewards" },
+        { text: "Resolution, failure, recycling", link: "/dao/resolution" },
+        { text: "Incentives & threat model", link: "/dao/incentives" },
+        { text: "Parameters", link: "/dao/parameters" },
+        { text: "FAQ", link: "/dao/faq" },
+        { text: "Glossary", link: "/dao/glossary" },
         { text: "Problems with coins", link: "/dao/problems-with-coins" },
       ],
     },
@@ -135,6 +144,7 @@ export default defineConfig({
       items: [
         { text: "Introduction", link: "/self-hosted" },
         { text: "Chat API", link: "/self-hosted/chat-api" },
+        { text: "Website Interface", link: "/self-hosted/interface" },
         { text: "Docs", link: "/self-hosted/docs" },
       ],
     },

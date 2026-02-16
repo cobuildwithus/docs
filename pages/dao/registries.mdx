@@ -1,0 +1,81 @@
+# Registries (TCRs)
+
+Cobuild uses **TCRs (token curated registries)** to control which budgets and which allocation mechanisms are eligible to receive streams.
+
+The design goal is **non-subjective admission**:
+- registries verify schema + safety constraints
+- staking determines “quality”
+
+All bonds are paid in `$COBUILD`.
+
+## Budget_TCR (Goal → Budget)
+
+### What it lists
+Each listed budget is eligible to:
+- receive stake weight
+- receive a stream from the Goal treasury (if staked)
+
+### Required budget listing fields
+Budget listings must include the required fields defined in [Core concepts](/dao/core-concepts), plus any optional metadata you want to attach.
+
+### Validity checklist (non-subjective)
+Budget listings are considered **valid** if they satisfy all of:
+
+- required fields are present and parseable
+- deadlines fit within the Goal’s deadline (or explicitly allowed by policy)
+- `activationThreshold <= runwayCap` (if both are set)
+- invariants use an allowlisted schema or guard library
+- payout mechanisms are allowlisted types (or explicitly permitted)
+- oracle params (bonds/liveness) are within configured bounds
+
+This keeps the registry focused on **safety and schema**, not “is this a good idea.”
+
+### Listing & challenge flow
+1. **Propose:** proposer submits budget + posts a `listingBond`
+2. **Challenge window:** anyone can challenge by posting a `challengeBond`
+3. **Dispute:** oracle resolves whether the listing is valid
+4. **Finalize:** if accepted, budget is listed; if rejected, it is not listed
+
+Loser pays winner follows standard TCR economics (bond handling is a parameter).
+
+## Allocation_TCR (Budget → Allocation Mechanisms)
+
+### What it lists
+Allocation mechanisms that can receive budget outflow ([Flows](/allocation/flows), [Rounds](/allocation/rounds)).
+
+### Required fields
+Allocation mechanisms must include the required fields defined in [Core concepts](/dao/core-concepts) and satisfy the parent budget’s `invariants`.
+
+### Validity checklist (non-subjective)
+Allocation mechanism listings are considered **valid** if they satisfy all of:
+
+- mechanism type is allowlisted (Flow, Round, etc.)
+- required fields are present and parseable
+- parent invariants are enforced (by construction or guard)
+- recipients/payout rules conform to schema
+
+### Same listing mechanics
+Same propose → challenge → dispute → finalize loop as Budget_TCR.
+
+## Who can propose and challenge?
+- Anyone can propose (with a bond)
+- Anyone can challenge (with a bond)
+- Disputes resolve via the configured oracle (UMA OO)
+
+## Design note: registries are about safety, not “quality”
+Cobuild is explicitly not trying to have the registry determine whether a budget is “good”.
+
+Instead:
+- the registry keeps out malformed / unsafe / invariant-violating items
+- stake determines which listed items actually receive funding
+
+## What registries do NOT do
+- they do not evaluate strategy quality or ROI
+- they do not prevent “dumb but valid” budgets
+- they do not eliminate bribery or collusion on their own
+
+## Griefing & challenge economics (must be tuned)
+Challenge bonds and windows should be sized to:
+- deter spam challenges
+- compensate valid proposers when challenged
+- keep the system permissionless but not easily stalled

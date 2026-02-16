@@ -1,0 +1,52 @@
+# Glossary
+
+**Goal**  
+The root goal with a treasury, oracleable success condition, and deadline.
+
+**Budget**  
+A budget/strategy under a Goal with its own goal, invariants, treasury, and child registry.
+
+**Allocation Mechanism**  
+A payout mechanism inside a budget ([Flow](/allocation/flows), [Round](/allocation/rounds)).
+
+**Stake weight**  
+The active amount used in pro-rata routing. Can be changed to reroute streams.
+
+**Stake exposure**  
+Escrowed principal locked until resolution. Determines risk and conviction.
+
+**Conviction**  
+Time-weighted accumulation over exposure (e.g., stake-seconds).
+
+**Reward escrow / reward pool**  
+The reserved portion of Goal inflows (20%) distributed to underwriters if the Goal succeeds.
+
+**Reward points**  
+Accounting units (optionally tokenized) minted/assigned on budget success and redeemable at Goal success.
+
+**Streamable balance**  
+Treasury balance minus RewardEscrow and any reserved balances; used to compute Goal outflow.
+
+**Spendable balance**  
+Treasury balance minus local reserves; used to compute budget outflow during execution.
+
+**TCR (Token Curated Registry)**  
+A token curated registry with challenge windows and oracle-based dispute resolution.
+
+**Budget_TCR**  
+Registry of budgets under a Goal.
+
+**Allocation_TCR**  
+Registry of allocation mechanisms under a budget.
+
+**Activation threshold (minBudget)**  
+Minimum balance a budget must reach before it can begin spending.
+
+**Runway cap (maxBudget)**  
+A throttle that pauses upstream inflow when a treasury balance is above a threshold.
+
+**Lifetime spend cap (budgetCap)**  
+Optional maximum cumulative spend used for efficiency weighting or hard limits.
+
+**Eligible child**  
+A listed child with sufficient stake and not currently capped; only eligible children receive streams.

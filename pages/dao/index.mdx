@@ -1,5 +1,104 @@
-# DAO [Placeholder intro]
+---
+showOutline: false
+---
 
-This section will cover DAO governance patterns, treasury design, and why token voting struggles with capital allocation in adversarial settings.
+import { DaoFlowDiagram } from "../../components/DaoFlowDiagram";
 
-Start here: [Problems with coins](/dao/problems-with-coins).
+# DAO [Our take on a decentralized autonomous organization]
+
+We've built a decentralized, credibly-neutral, and largely autonomous system on Ethereum that enables Cobuilds to pursue arbitrary goals - making decisions, spending capital, and hiring humans and AIs to do work.
+
+At the core is a market for "stakers" who earn rewards when budgets succeed and the Goal succeeds; principal is slashable only for proven rule-breaking.
+
+## Treasury Graph
+
+A Cobuild’s Treasury Graph is a hierarchical treasury streaming money to accomplish goals.
+
+<DaoFlowDiagram />
+
+It routes funds through a tree:
+
+**Goal → Budgets → Allocation Mechanisms ([Flows](/allocation/flows) / [Rounds](/allocation/rounds))**
+
+The mechanism is designed around a single question:
+
+> **What is the current weight vector over spending paths that best accomplishes the goal?**
+
+Cobuild answers that question continuously using stake. Only budgets with stake receive streamed funds, and stakers earn rewards only if their allocations help the Goal succeed.
+
+## Core properties
+
+### 1) Streaming is simple, real-time, and pro‑rata
+
+At every node, outgoing funds are streamed to children in proportion to **instantaneous stake share**.
+
+- If a child has no stake (or is below a threshold), it gets **0** stream
+- Weights update immediately when stake weight changes
+
+### 2) Rewards are time-weighted (conviction), not used for routing
+
+Routing weights come from _instant stake share_.
+
+Staker rewards are computed from **conviction** (time‑weighted stake, e.g. stake‑seconds), which:
+
+- rewards early + persistent underwriters
+- reduces last‑minute “sniping”
+- does **not** affect stream weights
+
+### 3) Rewards are gated by goal success
+
+Cobuild uses a **final claim gate**:
+
+- Budget success finalizes **reward entitlements**
+- but rewards become claimable **only if the Goal succeeds** before its deadline
+
+This ties “doing well inside the system” to “the goal actually being achieved”.
+
+### 4) Listing is optimistic and non-subjective (TCRs)
+
+Budgets and allocation mechanisms enter registries via **TCR mechanics**:
+
+- proposer posts a bond in `$COBUILD`
+- anyone can challenge within a window
+- disputes resolve via an oracle (UMA Optimistic Oracle)
+
+Registries verify **schema + safety**, not “quality”.
+Staking determines quality.
+
+## High-level flow
+
+1. A Goal is created with:
+
+   - an oracleable success condition
+   - a deadline
+   - a minimum raise target and raise deadline
+   - a treasury that receives funds
+
+2. Budgets are proposed into the **Budget_TCR**.
+   Once listed, they can receive stake and stream.
+
+3. Stakers allocate `$COBUILD` stake weight to budgets.
+
+   - Streaming from the Goal treasury routes to budget treasuries pro-rata by stake weight.
+   - Budgets cannot spend until they reach their **activation threshold** (aka `minBudget`).
+
+4. Inside a budget, allocation mechanisms are proposed via **Allocation_TCR**.
+   Stakers route budget outflow to these mechanisms pro-rata as well.
+
+5. When a budget succeeds:
+
+   - its stream stops
+   - unspent funds can be returned upward
+   - staker reward entitlements for that budget are finalized
+   - staked principal becomes reusable **within the same Goal**
+
+6. When the Goal succeeds:
+   - the global reward pool unlocks
+   - finalized reward entitlements become claimable
+
+## Who this spec is for
+
+- **Stakers / allocators:** how to direct funds and earn rewards
+- **Builders / integrators:** the state machine and accounting you implement
+- **Researchers:** incentive model and anti-sniping separation (routing vs rewards)
+- **Funders:** how contributions are streamed to work, with safety rails

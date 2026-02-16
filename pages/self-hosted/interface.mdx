@@ -1,0 +1,54 @@
+# Website Interface
+
+The Cobuild website and app interface are maintained in the `interface` monorepo.
+
+Repository: [github.com/cobuildwithus/interface](https://github.com/cobuildwithus/interface)
+
+## What it includes
+
+- `apps/web`: Next.js app that powers the Cobuild interface.
+- `apps/contracts`: contract types and wagmi config used by the web app.
+
+## Requirements
+
+- Node.js 20+
+- pnpm `9.15.9`
+
+## Local development
+
+```bash
+pnpm install
+cp apps/web/.env.example apps/web/.env
+cd apps/contracts
+pnpm generate
+cd ../..
+pnpm dev:web
+```
+
+`pnpm generate` runs `wagmi generate` in `apps/contracts` and then syncs generated outputs into the web app:
+
+- `apps/contracts/src/generated.ts` -> `apps/web/lib/domains/token/onchain/abis.ts`
+- `apps/contracts/addresses.ts` -> `apps/web/lib/domains/token/onchain/addresses.ts`
+
+## Required local checks
+
+```bash
+pnpm lint
+pnpm typecheck
+pnpm test
+pnpm --filter web build:ci
+```
+
+## Production build
+
+```bash
+pnpm build:web
+pnpm --filter web start
+```
+
+## Related services
+
+For a full self-hosted setup, pair the interface with:
+
+- [Chat API](/self-hosted/chat-api)
+- [Docs](/self-hosted/docs)

@@ -1,0 +1,130 @@
+import { ConvictionTimelineDiagram } from "../../components/ConvictionTimelineDiagram";
+import { ValueFlowsDiagram } from "../../components/ValueFlowsDiagram";
+
+# Rewards & conviction
+
+Cobuild uses a **single global reward pool** per Goal.
+
+- **20% of Goal inflows** are reserved into `RewardEscrow`
+- rewards are **not** used for routing weights
+- rewards are gated: **only claimable if Goal succeeds**
+
+## What earns rewards?
+
+Rewards only accrue from **successful budgets**.
+
+- A budget succeeds → reward entitlements for underwriters are finalized
+- A budget can spend and still fail → **no rewards** from that budget
+- A budget fails (no invariant breach) → **no rewards** from that budget
+- invariant breach / slashing → separate handling (see resolution.md)
+
+## Conviction (time-weighted underwriting)
+
+Baseline conviction per user is stake-seconds over exposure:
+
+- `conviction = ∫ exposure(t) dt`
+
+Decision:
+- conviction continues accruing **as long as exposure is locked**, even if routing weight is set to 0
+- conviction starts when exposure is created and stops at budget resolution
+
+This makes "exiting to dodge risk" impossible: you can stop funding, but you're still underwritten until resolution.
+
+<ConvictionTimelineDiagram />
+
+## How the 20% pool is distributed
+
+<ValueFlowsDiagram />
+
+To keep a single global pool while still rewarding "capital secured" and "time at risk", this design uses **Reward Points**.
+
+### Step 1: At budget success, compute budget “contribution weight”
+When budget `i` succeeds, record:
+
+- `spent_i`: net amount paid out by the budget (recommended definition below)
+- optional `lifetimeSpendCap_i` (aka `budgetCap`) if provided
+
+Define the budget weight `W_i`:
+
+- **Baseline (always valid):**
+  - `W_i = spent_i`
+
+- **Optional efficiency-weighting (only if lifetimeSpendCap is defined & enforced):**
+  - `efficiency_i = clamp(1 - spent_i / lifetimeSpendCap_i, 0, 1)`
+  - `W_i = spent_i * (ε + efficiency_i)`
+  - `ε` is a small constant so “successful at cap” still counts (e.g. `0.1`)
+
+If you don’t want efficiency games, use the baseline `W_i = spent_i`.
+
+### Step 2: Allocate `W_i` reward points to underwriters by conviction
+Inside budget `i`, each underwriter `u` has conviction:
+
+- `conviction_u,i` computed over the budget and its child mechanisms
+  - (child-level staking only counts if the user is also a budget underwriter)
+
+Compute conviction share:
+- `share_u,i = conviction_u,i / Σ conviction_*,i`
+
+Mint / assign reward points:
+- `points_u,i = W_i * share_u,i`
+
+### Step 3: Global claim at Goal success
+Let:
+- `P_total = Σ points_u,i` across all successful budgets
+- `RewardPool = balance(RewardEscrow)` (20% of inflows)
+
+At Goal success, each point redeems for:
+- `rewardPerPoint = RewardPool / P_total`
+
+User claim amount:
+- `claim_u = (Σ_i points_u,i) * rewardPerPoint`
+
+## Recommended definition of `spent`
+To align incentives with “don’t waste streamed funds”:
+
+- `spent` SHOULD mean: **net payouts** executed by the budget to recipients / mechanisms
+- `spent` SHOULD NOT count funds later returned upward
+- `spent` SHOULD be auditable (onchain transfers / accounting)
+
+## Direct deposit policy (must be explicit)
+If direct deposits to budgets are allowed, define how they interact with rewards. Recommended default:
+
+- direct deposits **count toward balances** (activation threshold / runway cap)
+- direct deposits **do not** increase `RewardEscrow` (only Goal inflows do)
+- direct deposits **do not** increase `spent` for reward weighting unless routed through the Goal
+
+This avoids accidental reward dilution or bypassing the reward skim.
+
+**Tradeoff note:** using `spent` as the weight is simple and objective, but it can bias toward “spend more.” The design relies on success gating and budget invariants to keep “spent” aligned with outcomes. If this feels too permissive, consider alternative weights (see below).
+
+## Alternative reward weights (optional)
+If you want rewards to track **liability underwritten** rather than spend, use one of:
+
+- **Capped spend:** `W_i = min(spent_i, lifetimeSpendCap_i)`
+- **Concave spend:** `W_i = sqrt(spent_i)` (reduces burn farming)
+- **Insured exposure-time:** `W_i = ∫ E_i(t) dt` where `E_i(t)` is capped by runway/lifetime caps
+
+## Tokenized reward claims (optional but recommended)
+
+Reward points can be implemented as:
+1) **Internal accounting** (a ledger), or
+2) A transferable “claim token” (ERC20-style) per Goal
+
+### Why tokenization helps
+Because rewards are gated until Goal success, tokenized claims let underwriters:
+- sell future upside for liquidity now
+- exit exposure to time risk without breaking alignment
+
+**Economic meaning:** a reward point token is a claim on the reward pool **conditional on Goal success** (i.e., a binary-outcome claim).
+
+### Suggested design
+- after budget success, mint transferable `RewardPointToken` to underwriters equal to `points_u,i`
+- redeemable only if the Goal succeeds
+- worthless if the Goal expires without success (see resolution.md)
+
+## What if the Goal fails or expires?
+Default behavior (see resolution.md):
+
+- reward points become non-redeemable (0)
+- staker principal becomes withdrawable at Goal resolution
+- reward escrow follows the Goal’s treasury disposition policy

@@ -1,0 +1,88 @@
+---
+showOutline: false
+---
+
+# FAQ
+
+## Is this just token voting?
+No.
+
+Cobuild stake weight is used to route treasury flows, not to pass proposals.
+You’re continuously expressing “fund this path more than that path”, and the router executes it.
+
+## Why no baseline flow?
+Because baseline funding turns into “set-and-forget”.
+Cobuild makes funding an explicit, continuously maintained signal:
+no stake → no stream.
+
+## Can I stop funding a budget I no longer believe in?
+Yes. You can set your **stake weight** on that budget to 0, which reduces that budget’s weight in the global allocation and immediately reduces its stream.
+
+However:
+- your **exposure** remains locked until budget resolution
+- conviction continues accruing while exposure is locked
+- you cannot withdraw principal out of the Goal until Goal resolution
+- you cannot reuse that principal for another budget until the budget resolves
+
+## Do I lose principal if a budget fails?
+Not by default.
+
+Policy:
+- budget fails without invariant breach → **no rewards**, but principal is returned (unlocked for reuse within the Goal)
+- invariant breach / proven misconduct → slashing can occur
+
+## What can I actually lose?
+- opportunity cost of locked capital
+- rewards from unsuccessful budgets
+- principal only if slashed for proven misconduct or invariant breach
+
+## What stops people from proposing “easy” budgets that don’t help?
+Two forces:
+1) rewards are gated on Goal success (local farming doesn’t pay if the overall goal fails)
+2) other stakers can refuse to fund (stake is the quality filter)
+
+## What stops a wealthy actor from staking to route funds to themselves?
+No single mechanism fully prevents this. Mitigations include:
+- enforceable invariants that restrict payouts or conflicts of interest
+- competition from other underwriters (counter-staking)
+- objective success conditions and dispute mechanisms
+See [Incentives & threat model](/dao/incentives) for details.
+
+## What stops last-minute reward sniping?
+Rewards are computed using conviction (time-weighted underwriting), not instantaneous weight.
+
+## Why have activationThreshold and runwayCap?
+`activationThreshold` (aka `minBudget`) prevents a budget from starting to spend with too little runway.  
+`runwayCap` (aka `maxBudget`) prevents overfunding and reduces the need for destabilizing stake withdrawals just to stop inflow.
+
+## Why do child mechanisms require budget underwriting?
+So “local underwriting” is conditional on underwriting the budget strategy.
+This reduces perverse incentives where someone tries to farm inside a budget they don’t actually support.
+
+## Can a budget spend funds and still fail?
+Yes. Spending is not success. If a budget fails its success condition, underwriters earn no rewards even if funds were spent.
+
+## Do direct deposits to a budget affect rewards?
+They can, but the policy must be explicit. Recommended default: direct deposits count toward balances (activation/runway), but do **not** increase RewardEscrow or reward weights unless routed through the Goal.
+
+## What stops a budget from setting a very short execution window and draining fast?
+`maxRatePerStakeUnit` caps how fast any amount of stake can pull funds. Implementations can also add a hard execution outflow cap if needed.
+
+## What happens to reward points if the Goal fails?
+Default: they become non-redeemable (0).
+
+This is the core alignment:
+rewards only exist if the Goal succeeds.
+
+## Do you support transferable reward claims?
+Yes (recommended).
+
+Reward points can be implemented as a transferable claim token.
+This helps underwriters get liquidity even though rewards are gated.
+
+## Who sets parameters?
+The Goal creator sets parameters at creation time (immutable for that Goal).
+
+## What oracle do you use?
+Default: UMA Optimistic Oracle.
+The protocol can support a pluggable oracle interface if you need alternatives later.

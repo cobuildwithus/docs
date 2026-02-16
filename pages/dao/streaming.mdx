@@ -1,0 +1,130 @@
+import { CapsGatesDiagram } from "../../components/CapsGatesDiagram";
+
+# Streaming & safety rails
+
+Cobuild streams funds through the hierarchy using stake weights.
+
+The routing rule is intentionally simple:
+
+- **no baseline flow**
+- only staked children receive funds
+- pro-rata in real time
+
+## Goal outflow rate (spend linearly to deadline)
+
+The system sets the Goal target outflow rate as:
+
+This means the Goal spends its streamable balance evenly over the remaining time.
+
+- `R_goal = streamableBalance / timeRemaining`
+
+Where:
+- `streamableBalance` excludes the reward escrow and any reserved balances
+- `timeRemaining = max(deadline - now, 0)`
+  - this clamps to zero once the deadline passes
+
+**Important:** actual outflow may be lower than the target due to caps / minStake / safety rails.
+Unspent funds remain in the Goal treasury.
+
+## Parent → children routing (generic)
+
+For a parent node with children `i`:
+
+- `w_i` = active stake weight on child `i`
+- `W = Σ w_i` across eligible children
+- `R_parent` = parent target outflow rate
+
+### Eligibility
+A child is eligible to receive a stream only if:
+- it is listed in the appropriate TCR, AND
+- `w_i >= minStake`, AND
+- it is not currently capped (see runwayCap / maxBudget)
+
+If no children are eligible, parent outflow is **0**.
+`W` is the sum of weights over eligible children only.
+
+### Pro-rata stream
+Raw pro-rata rate:
+This gives each child its proportional slice based on stake share.
+- `rawRate_i = R_parent * (w_i / W)`
+
+### Safety rail: max flow per unit stake (all levels)
+A cap limits:
+This prevents any single unit of stake from pulling more than a fixed rate.
+- `rate_i <= maxRatePerStakeUnit * w_i`
+
+Final per-child rate:
+The final rate is the lower of the raw pro-rata and the cap.
+- `rate_i = min(rawRate_i, maxRatePerStakeUnit * w_i)`
+
+If this cap binds, the leftover stays in the parent treasury.
+
+**Design note:** Cobuild does **not** automatically redistribute overflow to other children when a cap binds. Overflow remains unspent at the parent until stakers update weights or caps lift.
+
+<CapsGatesDiagram />
+
+## Goal → Budget streaming
+
+- No baseline flow
+- Budgets only receive streams if staked above threshold
+
+Additionally, each budget has a **runway throttle**:
+
+### Runway throttle (`runwayCap`, aka `maxBudget`)
+If `Budget.treasuryBalance >= Budget.runwayCap` then:
+- upstream inflow to that budget is paused (`rate_i = 0`)
+
+This avoids overfunding without forcing stakers to withdraw to stop “wasting” funds.
+Runway caps are **max balances**, not lifetime spend caps.
+
+> Direct donations to the budget treasury can still be allowed, even if upstream streaming is paused.
+> If allowed, they still count toward activation and runway caps. Reward handling for direct deposits should be defined explicitly (see Rewards & Parameters).
+
+## Budget activation: activation threshold gating
+
+A budget has two phases:
+
+### 1) Funding phase (pre-activation)
+- a budget can receive upstream stream (and direct deposits)
+- a budget **cannot spend** (cannot stream to child mechanisms) until activation
+
+### 2) Active phase (post-activation)
+Activation occurs when:
+- `Budget.treasuryBalance >= Budget.activationThreshold` (aka `minBudget`) for the first time
+
+Once activated:
+- the budget may start streaming to its listed child mechanisms
+- budget execution timer starts (see deadlines in resolution.md)
+
+If the budget never activates by `fundingDeadline`, it expires and funds return upward.
+Underwriter exposure remains locked during funding; if the budget expires pre-activation, exposure unlocks for reuse within the Goal and rewards from this budget are zero.
+
+## Budget → Allocation Mechanisms streaming
+
+Once activated, a budget computes its own outflow rate (same “spend linearly” model):
+
+This spends the budget’s balance evenly over its remaining execution window.
+
+- `R_budget = spendableBalance / timeRemainingInExecution`
+
+Then routes to child mechanisms using the same pro-rata + safety rails:
+- `minStake` per mechanism
+- `maxRatePerStakeUnit`
+- no baseline flow
+
+**Spend pacing note:** if a budget reaches late execution with funds still unspent, the target rate increases as timeRemaining shrinks. Downstream flows can accelerate near the end of execution.
+
+## Underwriting requirement for child staking
+Rule:
+
+> You may only stake into a child mechanism if you also have exposure staked on the parent budget.
+> Recommended default: `childExposure_u <= coverageRatio * parentExposure_u` (coverageRatio defaults to `1.0`).
+
+This makes “underwriting inside the budget” conditional on underwriting the budget itself.
+
+## What streaming represents
+Streaming is not governance voting.
+
+It’s a continuously updating allocation:
+- stake weights encode “what to fund now”
+- the router executes that allocation automatically
