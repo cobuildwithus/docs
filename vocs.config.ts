@@ -87,6 +87,20 @@ export default defineConfig({
       ],
     },
     {
+      text: "DAO",
+      items: [
+        { text: "How it works", link: "/dao" },
+        { text: "Core concepts", link: "/dao/core-concepts" },
+        { text: "Registries (TCRs)", link: "/dao/registries" },
+        { text: "Funding streams", link: "/dao/streaming" },
+        { text: "Rewards", link: "/dao/rewards" },
+        { text: "Goal resolution", link: "/dao/resolution" },
+        { text: "Incentives & threat model", link: "/dao/incentives" },
+        { text: "FAQ", link: "/dao/faq" },
+        { text: "Problems with voting", link: "/dao/problems-with-coins" },
+      ],
+    },
+    {
       text: "Capital Allocation",
       items: [
         { text: "Our Perspective", link: "/allocation/our-perspective" },
@@ -106,22 +120,6 @@ export default defineConfig({
         { text: "Revenue Networks", link: "/fundraising/revenue-networks" },
         { text: "Working Capital", link: "/fundraising/working-capital" },
         { text: "Zero Governance", link: "/fundraising/zero-governance" },
-      ],
-    },
-    {
-      text: "DAO",
-      items: [
-        { text: "How it works", link: "/dao" },
-        { text: "Core concepts", link: "/dao/core-concepts" },
-        { text: "Registries (TCRs)", link: "/dao/registries" },
-        { text: "Streaming & safety rails", link: "/dao/streaming" },
-        { text: "Rewards", link: "/dao/rewards" },
-        { text: "Resolution, failure, recycling", link: "/dao/resolution" },
-        { text: "Incentives & threat model", link: "/dao/incentives" },
-        { text: "Parameters", link: "/dao/parameters" },
-        { text: "FAQ", link: "/dao/faq" },
-        { text: "Glossary", link: "/dao/glossary" },
-        { text: "Problems with voting", link: "/dao/problems-with-coins" },
       ],
     },
     {

@@ -384,7 +384,7 @@ export function DaoFlowDiagram() {
                   <span className="w-16 text-xs text-neutral-400">{b.name}</span>
                   {b.yourStake > 0 && (
                     <span className="rounded bg-orange-900/50 px-2 py-0.5 text-xs text-orange-400">
-                      {b.yourStake} locked
+                      {b.yourStake} staked
                     </span>
                   )}
                   <input

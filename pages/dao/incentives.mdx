@@ -1,12 +1,15 @@
-# Incentives & threat model (practical)
+---
+showOutline: false
+---
+
+# Incentives & threat model
 
 This page explains what Cobuild is trying to make incentive-compatible, and what it does **not** try to guarantee.
 
 ## Actors and incentives
 
-- **Contributors:** fund the Goal treasury.
+- **Stakers:** stake `$COBUILD` on budgets to direct allocation, earn rewards on successful budgets.
 - **Budget proposers:** submit budgets with success conditions and invariants.
-- **Underwriters (stakers):** lock exposure, set weights, earn rewards on successful budgets.
 - **Builders / recipients:** receive budget outflows.
 - **Challengers / reporters:** challenge invalid listings or invariant breaches.
 - **Oracles / disputers:** resolve success and disputes (default: UMA OO).
@@ -22,10 +25,10 @@ So routing uses **instantaneous stake share**.
 
 ### Rewards need to be anti-sniping
 If rewards also followed instantaneous weights, you’d get:
-- last-minute stake deposits right before success
-- underpayment to early underwriters
+- last-minute contributions right before success
+- underpayment to early stakers
 
-So rewards use **stake-time** (time-weighted active routing).
+So rewards use **stake-time** (time-weighted stake allocation).
 
 ## Why gate rewards on Goal success?
 
@@ -34,16 +37,16 @@ Without a final gate, people can:
 - farm rewards on budgets that don’t move the goal-level needle
 
 By gating claims on Goal success:
-- underwriters only get paid if the overall goal succeeds
+- stakers only get paid if the overall goal succeeds
 - “local wins” only matter if they add up
 
-## Underwriter expected value (mental model)
+## Staker expected value (mental model)
 
-An underwriter’s expected value is roughly:
+A staker's expected value is roughly:
 
 `Pr(Goal succeeds) * reward share`
 minus
-`capital cost of locked exposure`
+`capital cost of locked stake`
 minus
 `expected slashing (if misconduct occurs)`
 
@@ -51,7 +54,7 @@ This incentivizes funding budgets that actually raise the probability of Goal su
 
 ## Economic security condition (simple statement)
 
-**Goal:** extracting value from the treasury should be bounded by the cost of obtaining and maintaining exposure (and/or by slashing risk).
+**Goal:** extracting value from the treasury should be bounded by the cost of staking `$COBUILD` (and/or by slashing risk).
 
 Cobuild enforces this via:
 - **no baseline flow** (no stake → no stream)
@@ -64,22 +67,23 @@ Cobuild enforces this via:
 ## Core threats and mitigations
 
 ### 1) Bribery / kickbacks for routing weight
-**Attack:** a recipient pays underwriters to route funds to them.
+**Attack:** a recipient pays stakers to route funds to them.
 
 **Mitigations:**
-- exposure is locked (bribes must cover time risk)
+- allocation power is proportional to `$COBUILD` staked (bribes must exceed their own loss from bad allocation)
 - rewards are time-weighted (sniping is weak)
 - maxRatePerStakeUnit limits how much can be pulled per stake
 - Goal success gate makes pure local farming unprofitable if it hurts the Goal
 
 **Residual risk:** bribery can still exist if external incentives dominate.
 
-### 2) Self-dealing budgets (“I stake to fund myself”)
-**Attack:** proposer lists a valid budget that routes to themselves and stakes to fund it.
+### 2) Self-dealing budgets ("I stake to fund myself")
+**Attack:** proposer lists a valid budget that routes to themselves and stakes to direct funds to it.
 
 **Mitigations:**
+- allocation power is proportional to `$COBUILD` staked — self-dealing is bounded by how much you stake
 - allowlisted invariants can prohibit obvious self-dealing
-- other underwriters can counter-allocate if they have enough exposure
+- other stakers can counter-allocate if they have enough stake
 - goal-level success and disputes can reject low-value “successes”
 
 **Residual risk:** wealthy actors can extract if the system allows “bad but valid” budgets and slashing is off.
@@ -90,7 +94,7 @@ Cobuild enforces this via:
 **Mitigations:**
 - success gating prevents rewards if the Goal fails
 - runwayCap and maxRatePerStakeUnit limit damage
-- optional alternative weights (capped/concave/insured exposure-time)
+- optional alternative weights (capped/concave/insured stake-time)
 
 ### 4) Dragging out execution to farm points
 **Attack:** keep a budget alive to accrue more stake-time points.
@@ -98,7 +102,7 @@ Cobuild enforces this via:
 **Mitigations:**
 - executionDuration limits the window
 - rewards only finalize on success
-- exposure has opportunity cost inside the Goal
+- locked stake has opportunity cost inside the Goal
 
 ### 5) Registry griefing / censorship via challenges
 **Attack:** challenge spam to delay listings.

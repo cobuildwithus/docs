@@ -4,29 +4,29 @@ export function StakeLifecycleDiagram() {
   const steps = [
     {
       num: 1,
-      title: "Deposit",
-      desc: "Stake locked on budget",
+      title: "Stake on Goal",
+      desc: "$COBUILD locked at the Goal level",
       color: "#f97316",
       bg: "rgba(249,115,22,0.08)",
     },
     {
       num: 2,
-      title: "Route",
-      desc: "Adjust weight anytime — streams reroute, stake stays locked",
+      title: "Allocate to budgets",
+      desc: "Move stake between budgets freely — streams reroute with weight",
       color: "#a78bfa",
       bg: "rgba(167,139,250,0.06)",
     },
     {
       num: 3,
-      title: "Budget resolves",
-      desc: "Stake unlocks, reusable within the Goal",
+      title: "Reallocate anytime",
+      desc: "Unstake from one budget, restake on another — points accrue while allocated",
       color: "#22c55e",
       bg: "rgba(34,197,94,0.06)",
     },
     {
       num: 4,
       title: "Goal resolves",
-      desc: "Stake withdrawable",
+      desc: "$COBUILD withdrawable",
       color: "#60a5fa",
       bg: "rgba(96,165,250,0.06)",
     },
@@ -39,7 +39,7 @@ export function StakeLifecycleDiagram() {
           Stake Lifecycle
         </div>
         <div className="text-xs text-neutral-500">
-          How stake flows through a single budget, from deposit to withdrawal
+          From staking on a Goal to withdrawal
         </div>
       </div>
 

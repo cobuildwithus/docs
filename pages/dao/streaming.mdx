@@ -12,9 +12,7 @@ The routing rule is intentionally simple:
 
 ## Goal outflow rate (spend linearly to deadline)
 
-The system sets the Goal target outflow rate as:
-
-This means the Goal spends its streamable balance evenly over the remaining time.
+The Goal streams its balance evenly over the time remaining until the deadline:
 
 - `R_goal = streamableBalance / timeRemaining`
 
@@ -57,9 +55,7 @@ Final per-child rate:
 The final rate is the lower of the raw pro-rata and the cap.
 - `rate_i = min(rawRate_i, maxRatePerStakeUnit * w_i)`
 
-If this cap binds, the leftover stays in the parent treasury.
-
-**Design note:** Cobuild does **not** automatically redistribute overflow to other children when a cap binds. Overflow remains unspent at the parent until stakers update weights or caps lift.
+If this cap binds, the leftover is redistributed to other eligible children.
 
 <CapsGatesDiagram />
 
@@ -97,7 +93,7 @@ Once activated:
 - budget execution timer starts (see deadlines in resolution.md)
 
 If the budget never activates by `fundingDeadline`, it expires and funds return upward.
-Underwriter exposure remains locked during funding; if the budget expires pre-activation, exposure unlocks for reuse within the Goal and rewards from this budget are zero.
+If the budget expires pre-activation, rewards from this budget are zero. Stakers can reallocate their stake to other budgets at any time.
 
 ## Budget → Allocation Mechanisms streaming
 
@@ -112,15 +108,14 @@ Then routes to child mechanisms using the same pro-rata + safety rails:
 - `maxRatePerStakeUnit`
 - no baseline flow
 
-**Spend pacing note:** if a budget reaches late execution with funds still unspent, the target rate increases as timeRemaining shrinks. Downstream flows can accelerate near the end of execution.
 
-## Underwriting requirement for child staking
+## Staking requirement for child mechanisms
 Rule:
 
-> You may only stake into a child mechanism if you also have exposure staked on the parent budget.
-> Recommended default: `childExposure_u <= coverageRatio * parentExposure_u` (coverageRatio defaults to `1.0`).
+> You may only stake into a child mechanism if you also have stake allocated to the parent budget.
 
-This makes “underwriting inside the budget” conditional on underwriting the budget itself.
+
+This prevents farming rewards inside a budget you don't actually back.
 
 ## What streaming represents
 Streaming is not governance voting.

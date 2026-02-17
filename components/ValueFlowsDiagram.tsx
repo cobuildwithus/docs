@@ -85,9 +85,9 @@ export function ValueFlowsDiagram() {
           <text x="195" y="68" fill="#fbbf24" fontSize="9" fontWeight="500">20%</text>
 
           <g transform="translate(295, 55)">
-            <rect x="-55" y="-22" width="110" height="44" rx="8" fill="url(#vfRewardGrad)" stroke="#fbbf24" strokeWidth="2" strokeDasharray="5 3" />
+            <rect x="-65" y="-22" width="130" height="44" rx="8" fill="url(#vfRewardGrad)" stroke="#fbbf24" strokeWidth="2" strokeDasharray="5 3" />
             <text x="0" y="-4" textAnchor="middle" fill="#fcd34d" fontSize="11" fontWeight="600">Reward Pool</text>
-            <text x="0" y="11" textAnchor="middle" fill="#a3a3a3" fontSize="8">escrowed until Goal success</text>
+            <text x="0" y="11" textAnchor="middle" fill="#a3a3a3" fontSize="8">escrowed until success</text>
           </g>
 
           {/* Lower branch: Streamable (80%) */}
@@ -95,13 +95,13 @@ export function ValueFlowsDiagram() {
           <text x="195" y="155" fill="#a78bfa" fontSize="9" fontWeight="500">80%</text>
 
           <g transform="translate(295, 165)">
-            <rect x="-55" y="-22" width="110" height="44" rx="8" fill="url(#vfStreamGrad)" stroke="#a78bfa" strokeWidth="2" />
+            <rect x="-65" y="-22" width="130" height="44" rx="8" fill="url(#vfStreamGrad)" stroke="#a78bfa" strokeWidth="2" />
             <text x="0" y="-4" textAnchor="middle" fill="#c4b5fd" fontSize="11" fontWeight="600">Streamable</text>
-            <text x="0" y="11" textAnchor="middle" fill="#a3a3a3" fontSize="8">funds available for budgets</text>
+            <text x="0" y="11" textAnchor="middle" fill="#a3a3a3" fontSize="8">available for budgets</text>
           </g>
 
           {/* Arrow to Budgets */}
-          <line x1="350" y1="165" x2="405" y2="165" stroke="#4ade80" strokeWidth="2" markerEnd="url(#vfArrowGreen)" />
+          <line x1="360" y1="165" x2="405" y2="165" stroke="#4ade80" strokeWidth="2" markerEnd="url(#vfArrowGreen)" />
           <text x="378" y="157" fill="#4ade80" fontSize="8">streams</text>
 
           {/* Budgets */}

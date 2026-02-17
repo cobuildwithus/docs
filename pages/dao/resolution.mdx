@@ -1,12 +1,6 @@
-# Resolution, failure, recycling
+# Goal resolution
 
-Cobuild has two resolution layers:
-
-- Budget resolution (success / failure / expiry)
-- Goal resolution (success / expiry/failure)
-
-All resolution is oracleable and challengeable.
-Default oracle: UMA Optimistic Oracle.
+All resolution is oracleable and challengeable. Default oracle: UMA Optimistic Oracle.
 
 ## Budget lifecycle
 
@@ -35,12 +29,9 @@ When the oracle confirms Budget success:
 1) **Stop upstream streaming** into the budget (rate becomes 0)
 2) **Stop or unwind downstream streams** as defined by budget rules
    - see mechanism specs (Flow/Round) for how unwinding works
-3) **Finalize reward points** for budget underwriters (rewards.md)
-4) **Unlock staker principal for reuse within this Goal**
-   - users can re-stake to other budgets
-   - principal is still locked inside the Goal until Goal resolution
-5) **Recycle funds**
-   - unspent budget funds MAY be returned to the Goal treasury (recommended default)
+3) **Finalize reward points** for stakers on this budget
+4) **Recycle funds**
+   - unspent budget funds are returned to the Goal treasury
 
 ## Budget failure / expiry (no invariant breach)
 
@@ -48,12 +39,7 @@ If a budget fails its success condition or expires:
 
 - upstream streaming stops
 - **no rewards** accrue from this budget
-- staker principal unlocks for reuse within this Goal
 - unspent funds return upward to the Goal treasury
-
-This matches the policy:
-
-> budget fails but didn’t break rules → no rewards, but principal returned (opportunity cost is the penalty)
 
 ## Invariants and slashing
 
@@ -91,12 +77,11 @@ If the deadline passes without success:
 - reward points become non-redeemable (0)
 - staker principals become withdrawable (Goal lock ends)
 - remaining treasury funds follow Goal policy (refund / rollover / governance)
-  - the protocol can define a default, or leave it to governance
 
 ### Goal funding threshold
-If the Goal does not reach its `minRaise` by `raiseDeadline`:
+If the Goal does not reach its `activationThreshold` by `fundingDeadline`:
 
-- contributions can automatically return to contributors
+- staked `$COBUILD` can automatically return to stakers
 - the Goal is considered inactive and streaming does not proceed
 
 This preserves the “final claim gate” alignment:

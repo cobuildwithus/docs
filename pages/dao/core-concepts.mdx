@@ -4,65 +4,47 @@ import { StakeLifecycleDiagram } from "../../components/StakeLifecycleDiagram";
 
 ## Entities
 
-### Goal
+A Goal and a Budget share the same shape — a Budget is just a sub-goal under a parent. The root Goal has some extra fields (reward pool, oracle), but the core structure is the same.
 
-A Goal defines the “thing we’re trying to accomplish”.
+### Shared fields
 
-**Fields (conceptual):**
+Every goal node (Goal or Budget) has:
 
 - `goal`: human-readable definition
 - `successCondition`: oracleable end condition
 - `deadline`: must resolve by this timestamp
-- `minRaise`: minimum funds required to activate the Goal
-- `raiseDeadline`: timestamp by which `minRaise` must be reached
-- `treasury`: receives funds; streams to budgets
-- `Budget_TCR`: registry of eligible budgets
+- `activationThreshold`: minimum treasury balance required before spending can begin
+- `fundingDeadline`: timestamp by which `activationThreshold` must be reached
+- `treasury`: holds funds; streams to children
+- `childRegistry`: registry of eligible children (`Budget_TCR` for Goals, `Allocation_TCR` for Budgets)
+- `invariants`: "must not do" constraints (enforceable)
+
+### Goal (root)
+
+Additional fields on the root Goal:
+
+- `rewardRate`: fraction of inflows reserved to the **reward pool** (default: 20%)
 - `oracle`: default is UMA Optimistic Oracle
 
-**Key rule:** a global fraction of Goal inflows is reserved to the **reward pool** (default: 20%).
+**Funding rule:** if the Goal does not reach `activationThreshold` by `fundingDeadline`, staked `$COBUILD` can automatically return to stakers.
 
-**Funding rule:** if the Goal does not reach `minRaise` by `raiseDeadline`, contributions can automatically return to contributors.
+### Budget (sub-goal)
+
+Additional fields on a Budget:
+
+- `parent`: the parent Goal
+- `executionDuration`: countdown starts at activation (activation threshold reached)
+- `runwayCap`: if treasury balance is ≥ `runwayCap`, upstream inflow pauses
+  - note: this is a **runway cap / throttle**, not a lifetime spend cap
+- `lifetimeSpendCap` (optional): maximum cumulative spend if enforced
 
 ## Accounting definitions (conceptual)
 
 To keep routing and rewards consistent, define balances once:
 
-- `treasuryBalance`: total tokens held by a node treasury
+- `treasuryBalance`: total tokens held by a goal treasury
 - `RewardEscrowBalance`: reserved reward pool held at the Goal
-- `streamableBalance`: `treasuryBalance - RewardEscrowBalance - reservedBalances`
-- `spendableBalance`: `treasuryBalance - reservedBalances`
-
-Implementations can add additional reserves, but these definitions should be explicit.
-
-## “What fact do we want to know?”
-
-At each node, the fact is:
-
-> the **current weight vector over children**, derived from stake weights.
-
-Cobuild turns stake into a continuously-updating funding allocation.
-
-### Budget
-
-A budget is a concrete goal under the top level Goal.
-
-**Fields:**
-
-- `parentGoal`
-- `goal`, `successCondition`
-- `fundingDeadline`: latest time the budget must reach `activationThreshold` to activate
-- `executionDuration`: countdown starts at activation (activation threshold reached)
-- `invariants`: “must not do” constraints (enforceable)
-- `treasury`: receives stream from the parent
-- `Allocation_TCR`: registry of eligible allocation mechanisms inside this budget
-
-**Budget gates:**
-
-- `activationThreshold` (aka `minBudget`): budget cannot spend until it has at least this balance
-- `runwayCap` (aka `maxBudget`): if budget treasury balance is ≥ `runwayCap`, upstream inflow pauses
-  - note: this is a **runway cap / throttle**, not a lifetime spend cap
-- `lifetimeSpendCap` (aka `budgetCap`, optional): maximum cumulative spend if enforced
-  - direct donations to a budget can be allowed even when upstream is paused
+- `streamableBalance`: `treasuryBalance - RewardEscrowBalance`
 
 ### Allocation Mechanism (inside a budget)
 
@@ -73,53 +55,46 @@ A mechanism is a concrete way to pay contributors.
 - [`Flow`](/allocation/flows): continuous streaming to recipients
 - [`Round`](/allocation/rounds): time-bounded grant round
 
-**Fields:**
-
-- `rules`: payout logic (milestones, vesting, attestations, etc.)
-- `stakePool`: stake weight used to route budget outflow to this mechanism
-
 Mechanisms are listed via the budget's `Allocation_TCR`.
 
-## Stake: weight vs exposure
+## Staking
 
-Cobuild separates:
+You stake `$COBUILD` on a Goal. Your `$COBUILD` is locked at the Goal level until the Goal resolves — but within the Goal, you can freely move stake between budgets at any time. The more stake on a budget, the larger its share of the stream.
 
-- **Stake weight:** affects routing (streams) and reward accrual (points)
-- **Stake exposure:** affects risk (locked collateral until resolution)
+Staking has two dimensions:
 
-### Stake weight (routing)
+- **Stake allocation** — which budgets your stake is on, and how much. You can reallocate between budgets freely.
+- **Weight** — the portion of your allocated stake actively counted in the routing split. You can set this to 0 to stop routing without moving your stake.
 
-Your **active weight** is the amount counted in the pro-rata split.
+### Weight (routing only)
 
-- can be set to 0 to stop routing funds to that child
-- updates stream weights immediately
+Your weight on a budget determines how much of the stream that budget receives.
 
-### Stake exposure (risk)
+- weight updates stream allocations immediately
+- setting weight to 0 stops routing to that budget
 
-When you stake into a budget (or mechanism), your principal becomes **escrowed** as exposure.
+### Goal-level lock
 
-- exposure locks risk — you cannot "escape" slashing by removing weight right before resolution
-- exposure is locked until that budget (or parent budget) resolves
-- exposure is locked **per Goal** (principal can't exit the Goal until Goal resolution)
-- exposure alone does **not** accrue points — points require active weight
+Your `$COBUILD` is locked at the Goal level until Goal resolution. This is your skin in the game.
 
-> Your exposure remains locked until budget resolution, but **points stop accruing when you set weight to 0**.
+- you can move stake between budgets freely within a Goal
+- you cannot withdraw `$COBUILD` from the Goal until it resolves
+- points accrue on stake allocated to a budget — you keep earning as long as stake is there
 
 ### Child staking semantics (default)
 
-Child staking is a **sub-allocation** of a user’s parent exposure:
+Child staking is a **sub-allocation** of a user's parent stake:
 
-- `Σ childExposure_u ≤ parentExposure_u`
-- you may adjust child weights at any time, but cannot exceed your parent exposure
+- `Σ childStake_u ≤ parentStake_u`
+- you may adjust child weights at any time, but cannot exceed your parent stake allocation
 
-If an implementation allows additive child exposure, it should enforce an explicit coverage ratio.
 
 ## Stake lifecycle (one budget)
 
-1. **Stake deposited → exposure locked** on the budget.
-2. **Weight can move (0..exposure)** to reroute streams without unlocking principal.
-3. **Budget resolves → exposure unlocks** for reuse within the Goal.
-4. **Goal resolves → principal withdrawable** from the Goal.
+1. **Stake `$COBUILD` on a Goal** — tokens are locked at the Goal level.
+2. **Allocate stake to budgets** — movable between budgets at any time.
+3. **Adjust weight (0..allocated stake)** to reroute streams.
+4. **Goal resolves → `$COBUILD` withdrawable.**
 
 <StakeLifecycleDiagram />
 
@@ -129,14 +104,14 @@ Points are the time-weighted accumulator used for rewards.
 
 Baseline definition:
 
-- `points_u,i = ∫ weight_u,i(t) dt`
+- `points_u,i = ∫ stake_u,i(t) dt`
 
 Intuition:
 
-- early underwriters earn more than late underwriters
-- persistent underwriters earn more than short-term underwriters
-- setting weight to 0 stops accrual (even though exposure stays locked)
-- points are frozen during dispute windows and only accrue when there is nonzero flow
+- early stakers earn more than late stakers
+- persistent stakers earn more than short-term stakers
+- you can move stake between budgets, but points only accrue while stake is allocated
+- points are frozen during dispute windows
 
 ## Reward pool (global, single pool)
 
