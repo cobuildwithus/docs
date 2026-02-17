@@ -1,0 +1,137 @@
+---
+showOutline: false
+---
+
+import { ConvictionTimelineDiagram } from "../../components/ConvictionTimelineDiagram";
+import { ValueFlowsDiagram } from "../../components/ValueFlowsDiagram";
+
+# Rewards
+
+Cobuild uses a **single global reward pool** per Goal.
+
+- **20% of Goal inflows** are reserved into `RewardEscrow`
+- rewards are **not** used for routing weights
+- rewards are gated: **only claimable if Goal succeeds**
+
+## Why stake-time
+
+The allocator's job is judgment and commitment, not spending. They don't control how a budget spends — they control *which budgets to back and for how long.* The reward formula should measure the thing they actually contribute.
+
+The key distinction: **stake weight** controls routing (where funds flow), **stake exposure** is your locked collateral (what's at risk). You can set your weight to 0 to stop funding a budget, but your exposure stays locked until it resolves.
+
+Rewards accrue on **active weight**, not merely locked exposure:
+
+`reward_u,i = ∫ weight_u,i(t) dt`
+
+When you set weight to zero, you stop earning. When a budget fails, all its stakers earn zero — doesn't matter how long they were in.
+
+### Why not exposure-time?
+
+Pure exposure-time creates a free-rider channel. You stake early, get exposure locked, then later set weight to 0 — stop actually funding the budget. Under exposure-time you keep earning rewards anyway as long as the budget eventually succeeds. Your capital is stuck but still earning the same reward, even after you stop backing the allocation.
+
+That directly contradicts the core story: if you're not actively directing funds somewhere, you shouldn't be paid for allocation you're not doing. Stake-time fixes this with one rule: **rewards accrue only while you're actively backing the budget.**
+
+This preserves anti-sniping (late arrivals get less time in the integral) while also rewarding the ongoing attention and judgment that makes continuous streaming useful.
+
+### When rewards accrue
+
+Rewards accrue only while:
+- your weight is nonzero on the budget
+- the budget is eligible and receiving a nonzero stream
+- no success/failure assertion is pending (frozen during dispute windows)
+
+The first rule means passive capital earns nothing. The second prevents farming rewards on capped or paused budgets. The third prevents inflating rewards by extending disputes.
+
+<ConvictionTimelineDiagram />
+
+## How the reward pool is distributed
+
+<ValueFlowsDiagram />
+
+### Step 1: At budget success, compute reward weight per staker
+
+When budget `i` succeeds, each staker `u` gets:
+
+- `reward_u,i = ∫ weight_u,i(t) dt` (stake-days on that budget)
+
+If a budget fails, all its stakers earn **zero rewards**.
+
+### Step 2: Global claim at Goal success
+
+- `R_total = Σ reward_u,i` across all successful budgets
+- `RewardPool = balance(RewardEscrow)` (20% of inflows)
+
+At Goal success, each unit redeems for:
+- `rewardPerUnit = RewardPool / R_total`
+
+User claim:
+- `claim_u = (Σ_i reward_u,i) * rewardPerUnit`
+
+## Concrete example
+
+Three budgets under a Goal. Reward pool is $200K.
+
+**Budget A** succeeds (100 day execution):
+- Alice: staked 10K, weight active for all 100 days
+  - Reward weight: `10,000 × 100 = 1,000,000`
+- Bob: staked 5K, weight active for 80 days, then set to zero for last 20 (he got nervous)
+  - Reward weight: `5,000 × 80 = 400,000`
+
+**Budget B** succeeds (50 day execution):
+- Carol: staked 20K, weight active all 50 days
+  - Reward weight: `20,000 × 50 = 1,000,000`
+
+**Budget C** fails. Dave staked 15K for 90 days. **Zero rewards.**
+
+Total reward weight: `2,400,000`
+
+- Alice earns: `$83,333`
+- Bob earns: `$33,333`
+- Carol earns: `$83,333`
+
+Note what happens to Bob: he was locked for all 100 days (exposure), but only actively backing the budget for 80 days (weight). He earns less than if he'd kept his weight active. Under pure exposure-time, he'd earn nearly the same as someone who stayed committed. Under stake-time, the system pays you for the thing it actually needs you to do: **point capital at the right things and keep it pointed there.**
+
+## What this rewards and what it doesn't
+
+**It rewards:** committing capital early, staying actively committed, and picking budgets that succeed.
+
+**It doesn't reward:** passive lockup, how much money flowed through the budget, how much was spent, or how big the budget was.
+
+## Common objections
+
+**"What if a budget barely spends anything but technically succeeds?"** This is where **success condition design** becomes critical. If the success condition is meaningful — "ship this feature and it has 1000 users" or "produce this research output and it passes peer review" — then a budget that "barely spends" but succeeds is a great outcome. The allocators correctly identified something that could succeed without massive resources. That's *good judgment*. The failure mode is if success conditions are too easy to satisfy — but that's a success condition quality problem, not a reward formula problem.
+
+**"Can't you just diversify across every budget?"** Capital is finite and locked. Staking 10K on Budget A means that 10K isn't available for Budget B unless A resolves first. Over-diversification means thinner stakes everywhere — less influence on routing, less stake-time per budget. You're forced to make actual bets.
+
+**"Can easy budgets soak up reward share?"** If a mostly-irrelevant budget attracts lots of stake-time and succeeds, it takes a share of the reward pool. The goal-success gate mitigates this but doesn't eliminate it. If this becomes a problem, tightening `maxRatePerStakeUnit` helps — to earn rewards at scale you must also be enabling funds to flow at scale, because weight is literally collateralizing flow.
+
+## The deeper point
+
+The reward formula is deliberately dumb. It just counts stake-days on successful budgets. The entire quality signal lives in two places:
+
+1. **The success condition** — is this budget measuring something that actually matters?
+2. **The goal-success gate** — did all this budget-level activity actually add up to the goal being achieved?
+
+When you're tuning the system, you're tuning success conditions and goal design — which is where the real judgment lives — instead of tuning reward formulas and spend incentives.
+
+## Tokenized reward claims (optional)
+
+Reward entitlements can be implemented as transferable claim tokens (ERC20-style) per Goal.
+
+Because rewards are gated until Goal success, tokenized claims let stakers:
+- sell future upside for liquidity now
+- exit exposure to time risk without breaking alignment
+
+A reward claim token is a claim on the reward pool **conditional on Goal success** — a binary-outcome claim.
+
+## What if a budget hasn't resolved when the Goal succeeds?
+
+If the Goal succeeds but Budget D is still in execution — it hasn't succeeded or failed yet — stakers on Budget D earn **zero rewards** for that budget. Only budgets that have successfully resolved before (or at) Goal success generate reward entitlements. Unresolved budgets are treated the same as failed budgets for reward purposes.
+
+This means timing matters: a budget that's on track but resolves *after* the Goal deadline contributes nothing to its stakers' rewards. Stakers are incentivized to back budgets that will resolve within the Goal's timeframe.
+
+## What if the Goal fails?
+
+- reward claims become non-redeemable (zero value)
+- staker principal becomes withdrawable at Goal resolution
+- reward escrow follows the Goal's treasury disposition policy (see [resolution](/dao/resolution))

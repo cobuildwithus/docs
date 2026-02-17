@@ -1,0 +1,157 @@
+import { StakeLifecycleDiagram } from "../../components/StakeLifecycleDiagram";
+
+# Core concepts
+
+## Entities
+
+### Goal
+
+A Goal defines the “thing we’re trying to accomplish”.
+
+**Fields (conceptual):**
+
+- `goal`: human-readable definition
+- `successCondition`: oracleable end condition
+- `deadline`: must resolve by this timestamp
+- `minRaise`: minimum funds required to activate the Goal
+- `raiseDeadline`: timestamp by which `minRaise` must be reached
+- `treasury`: receives funds; streams to budgets
+- `Budget_TCR`: registry of eligible budgets
+- `oracle`: default is UMA Optimistic Oracle
+
+**Key rule:** a global fraction of Goal inflows is reserved to the **reward pool** (default: 20%).
+
+**Funding rule:** if the Goal does not reach `minRaise` by `raiseDeadline`, contributions can automatically return to contributors.
+
+## Accounting definitions (conceptual)
+
+To keep routing and rewards consistent, define balances once:
+
+- `treasuryBalance`: total tokens held by a node treasury
+- `RewardEscrowBalance`: reserved reward pool held at the Goal
+- `streamableBalance`: `treasuryBalance - RewardEscrowBalance - reservedBalances`
+- `spendableBalance`: `treasuryBalance - reservedBalances`
+
+Implementations can add additional reserves, but these definitions should be explicit.
+
+## “What fact do we want to know?”
+
+At each node, the fact is:
+
+> the **current weight vector over children**, derived from stake weights.
+
+Cobuild turns stake into a continuously-updating funding allocation.
+
+### Budget
+
+A budget is a concrete goal under the top level Goal.
+
+**Fields:**
+
+- `parentGoal`
+- `goal`, `successCondition`
+- `fundingDeadline`: latest time the budget must reach `activationThreshold` to activate
+- `executionDuration`: countdown starts at activation (activation threshold reached)
+- `invariants`: “must not do” constraints (enforceable)
+- `treasury`: receives stream from the parent
+- `Allocation_TCR`: registry of eligible allocation mechanisms inside this budget
+
+**Budget gates:**
+
+- `activationThreshold` (aka `minBudget`): budget cannot spend until it has at least this balance
+- `runwayCap` (aka `maxBudget`): if budget treasury balance is ≥ `runwayCap`, upstream inflow pauses
+  - note: this is a **runway cap / throttle**, not a lifetime spend cap
+- `lifetimeSpendCap` (aka `budgetCap`, optional): maximum cumulative spend if enforced
+  - direct donations to a budget can be allowed even when upstream is paused
+
+### Allocation Mechanism (inside a budget)
+
+A mechanism is a concrete way to pay contributors.
+
+**Types (examples):**
+
+- [`Flow`](/allocation/flows): continuous streaming to recipients
+- [`Round`](/allocation/rounds): time-bounded grant round
+
+**Fields:**
+
+- `rules`: payout logic (milestones, vesting, attestations, etc.)
+- `stakePool`: stake weight used to route budget outflow to this mechanism
+
+Mechanisms are listed via the budget's `Allocation_TCR`.
+
+## Stake: weight vs exposure
+
+Cobuild separates:
+
+- **Stake weight:** affects routing (streams) and reward accrual (points)
+- **Stake exposure:** affects risk (locked collateral until resolution)
+
+### Stake weight (routing)
+
+Your **active weight** is the amount counted in the pro-rata split.
+
+- can be set to 0 to stop routing funds to that child
+- updates stream weights immediately
+
+### Stake exposure (risk)
+
+When you stake into a budget (or mechanism), your principal becomes **escrowed** as exposure.
+
+- exposure locks risk — you cannot "escape" slashing by removing weight right before resolution
+- exposure is locked until that budget (or parent budget) resolves
+- exposure is locked **per Goal** (principal can't exit the Goal until Goal resolution)
+- exposure alone does **not** accrue points — points require active weight
+
+> Your exposure remains locked until budget resolution, but **points stop accruing when you set weight to 0**.
+
+### Child staking semantics (default)
+
+Child staking is a **sub-allocation** of a user’s parent exposure:
+
+- `Σ childExposure_u ≤ parentExposure_u`
+- you may adjust child weights at any time, but cannot exceed your parent exposure
+
+If an implementation allows additive child exposure, it should enforce an explicit coverage ratio.
+
+## Stake lifecycle (one budget)
+
+1. **Stake deposited → exposure locked** on the budget.
+2. **Weight can move (0..exposure)** to reroute streams without unlocking principal.
+3. **Budget resolves → exposure unlocks** for reuse within the Goal.
+4. **Goal resolves → principal withdrawable** from the Goal.
+
+<StakeLifecycleDiagram />
+
+## Points (stake-time)
+
+Points are the time-weighted accumulator used for rewards.
+
+Baseline definition:
+
+- `points_u,i = ∫ weight_u,i(t) dt`
+
+Intuition:
+
+- early underwriters earn more than late underwriters
+- persistent underwriters earn more than short-term underwriters
+- setting weight to 0 stops accrual (even though exposure stays locked)
+- points are frozen during dispute windows and only accrue when there is nonzero flow
+
+## Reward pool (global, single pool)
+
+A fixed fraction of Goal inflows is diverted into a global reward escrow.
+
+- default: **20% of all Goal inflows**
+- this escrow is not streamed to budgets
+- rewards are only paid out if the **Goal succeeds**
+
+## Oracle + disputes
+
+Cobuild relies on an oracle / dispute mechanism for:
+
+- TCR listing disputes (accept/reject budgets or mechanisms)
+- Budget success resolution (success/failure)
+- Goal success resolution
+
+Default: **UMA Optimistic Oracle** for optimistic assertions with a dispute window.

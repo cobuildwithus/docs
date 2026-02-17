@@ -1,0 +1,112 @@
+# Parameters
+
+This page lists the parameters you’ll want to expose in a Cobuild implementation.
+
+Where helpful, defaults are suggested — treat them as placeholders until you pick numbers.
+
+## Global (per Goal)
+
+- `stakeAsset`: `$COBUILD`
+- `tcrBondAsset`: `$COBUILD`
+- `rewardRate`: `0.20` (20% of Goal inflows diverted to reward escrow)
+- `deadline`: timestamp
+- `minRaise`: minimum funds required to activate the Goal
+- `raiseDeadline`: timestamp by which `minRaise` must be reached
+- `refundPolicy`: automatic return to contributors if `minRaise` is not met by `raiseDeadline`
+- `oracle`: UMA Optimistic Oracle configuration
+- `R_goal`: computed as `streamableBalance / timeRemaining`
+  - `streamableBalance` should exclude RewardEscrow and any reserved balances
+
+### Streaming safety
+- `minStake_budget`: minimum stake weight for a budget to receive stream
+- `maxRatePerStakeUnit_Goal`: cap on rate per unit stake at Goal → budget level
+
+## Budget listing fields (Budget_TCR)
+
+Required:
+- `goal`
+- `successCondition`
+- `invariants`
+- `activationThreshold` (aka `minBudget`)
+- `runwayCap` (aka `maxBudget`, pauses inflow above cap)
+- `fundingDeadline` (activation must happen by this time)
+- `executionDuration` (timer starts at activation)
+
+Optional:
+- `lifetimeSpendCap` (aka `budgetCap`, if you want efficiency-weighting for rewards)
+- `oracleParams` (liveness / bonds / etc.)
+- `runwayResumeThreshold` (optional hysteresis to avoid oscillation at the cap)
+
+### Streaming safety (budget → mechanisms)
+- `minStake_child`: minimum stake weight per mechanism to receive stream
+- `maxRatePerStakeUnit_Budget`: cap on rate per unit stake at budget → child level
+- `coverageRatio_childToParent`: maximum child exposure as a ratio of parent exposure (default `1.0`)
+- `maxExecutionOutflowRate` (optional): hard cap on execution outflow rate if you want to prevent short-duration drains
+
+## TCR parameters (both Budget_TCR and Allocation_TCR)
+
+- `listingBond`
+- `challengeBond`
+- `challengeWindow`
+- `oracleLiveness`
+- `loserPaysWinner` (bond routing policy)
+
+## Rewards parameters
+
+- `spentDefinition`: recommended “net payouts, excluding returns”
+- `W_i` formula at budget success:
+  - baseline: `W_i = spent_i`
+  - optional: `W_i = spent_i * (ε + efficiency_i)`
+- `ε`: small constant for efficiency weighting (e.g. `0.1`)
+- `points`: baseline `∫ weight dt` (stake-time; accrues only while weight > 0)
+- `directDepositPolicy`: whether direct budget deposits affect rewards and/or RewardEscrow
+
+## Resolution defaults
+
+- On budget success:
+  - stop streams
+  - return unspent funds upward (recommended)
+  - finalize reward points
+  - unlock principal for reuse within Goal
+
+- On budget failure/expiry (no invariant breach):
+  - stop streams
+  - return unspent funds upward
+  - no rewards
+  - unlock principal for reuse within Goal
+
+- On Goal success:
+  - reward pool unlocks
+  - principal withdrawable
+
+- On Goal expiry/failure:
+  - reward points non-redeemable (0)
+  - principal withdrawable
+  - treasury disposition is policy-defined (refund/rollover/governance)
+
+## Slashing parameters (if enabled)
+- `slashOnInvariantBreach` (bool)
+- `slashPercentInvariantBreach`
+- `slashOnInvalidListing` (bool)
+- `slashPercentInvalidListing`
+- `slashRecipientPolicy` (treasury / challengers / reward pool)
+
+## Notes on upgradability
+Most parameters are safe to adjust per Goal at creation time (creator-defined, immutable).
+If you later add governance, keep it scoped per Goal to avoid cross-goal politics.
+
+## Constraints & relationships (recommended)
+- `activationThreshold <= runwayCap`
+- `fundingDeadline <= Goal.deadline`
+- `activationTime + executionDuration <= Goal.deadline` (if required by policy)
+
+## Security-critical parameters (tune carefully)
+- `maxRatePerStakeUnit_*`
+- `minStake_*`
+- `runwayCap`
+- oracle liveness / bonds
+
+## Tuning guidelines (non-binding)
+- set `activationThreshold` to at least a few weeks of expected burn
+- set `runwayCap` to avoid idle hoards while allowing smooth execution
+- keep `maxRatePerStakeUnit` low enough to prevent rapid drains but high enough for responsiveness
