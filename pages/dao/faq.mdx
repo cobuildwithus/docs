@@ -19,8 +19,7 @@ no stake → no stream.
 Yes. You can set your **stake weight** on that budget to 0, which reduces that budget’s weight in the global allocation and immediately reduces its stream.
 
 However:
-- your **exposure** remains locked until budget resolution
-- conviction continues accruing while exposure is locked
+- your **exposure** remains locked until budget resolution, but points stop accruing when you set weight to 0
 - you cannot withdraw principal out of the Goal until Goal resolution
 - you cannot reuse that principal for another budget until the budget resolves
 
@@ -49,7 +48,7 @@ No single mechanism fully prevents this. Mitigations include:
 See [Incentives & threat model](/dao/incentives) for details.
 
 ## What stops last-minute reward sniping?
-Rewards are computed using conviction (time-weighted underwriting), not instantaneous weight.
+Rewards are computed using stake-time (time-weighted active routing), not instantaneous weight.
 
 ## Why have activationThreshold and runwayCap?
 `activationThreshold` (aka `minBudget`) prevents a budget from starting to spend with too little runway.  

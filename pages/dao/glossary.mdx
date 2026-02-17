@@ -12,11 +12,11 @@ A payout mechanism inside a budget ([Flow](/allocation/flows), [Round](/allocati
 **Stake weight**  
 The active amount used in pro-rata routing. Can be changed to reroute streams.
 
-**Stake exposure**  
-Escrowed principal locked until resolution. Determines risk and conviction.
+**Stake exposure**
+Escrowed principal locked until resolution. Determines risk. Exposure alone does not accrue points.
 
-**Conviction**  
-Time-weighted accumulation over exposure (e.g., stake-seconds).
+**Points (stake-time)**
+Time-weighted accumulation over active weight: `points = ∫ weight(t) dt`. Accrues only while weight > 0. Used for reward distribution.
 
 **Reward escrow / reward pool**  
 The reserved portion of Goal inflows (20%) distributed to underwriters if the Goal succeeds.

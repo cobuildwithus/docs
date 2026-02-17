@@ -25,7 +25,7 @@ If rewards also followed instantaneous weights, you’d get:
 - last-minute stake deposits right before success
 - underpayment to early underwriters
 
-So rewards use **conviction** (time-weighted exposure).
+So rewards use **stake-time** (time-weighted active routing).
 
 ## Why gate rewards on Goal success?
 
@@ -92,8 +92,8 @@ Cobuild enforces this via:
 - runwayCap and maxRatePerStakeUnit limit damage
 - optional alternative weights (capped/concave/insured exposure-time)
 
-### 4) Dragging out execution to farm conviction
-**Attack:** keep a budget alive to accrue more conviction.
+### 4) Dragging out execution to farm points
+**Attack:** keep a budget alive to accrue more stake-time points.
 
 **Mitigations:**
 - executionDuration limits the window

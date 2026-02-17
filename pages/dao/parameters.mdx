@@ -58,7 +58,7 @@ Optional:
   - baseline: `W_i = spent_i`
   - optional: `W_i = spent_i * (ε + efficiency_i)`
 - `ε`: small constant for efficiency weighting (e.g. `0.1`)
-- `conviction`: baseline `∫ exposure dt`
+- `points`: baseline `∫ weight dt` (stake-time; accrues only while weight > 0)
 - `directDepositPolicy`: whether direct budget deposits affect rewards and/or RewardEscrow
 
 ## Resolution defaults

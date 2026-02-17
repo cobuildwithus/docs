@@ -84,8 +84,8 @@ Mechanisms are listed via the budget's `Allocation_TCR`.
 
 Cobuild separates:
 
-- **Stake weight:** affects routing (streams)
-- **Stake exposure:** affects risk + reward accounting (conviction)
+- **Stake weight:** affects routing (streams) and reward accrual (points)
+- **Stake exposure:** affects risk (locked collateral until resolution)
 
 ### Stake weight (routing)
 
@@ -94,15 +94,16 @@ Your **active weight** is the amount counted in the pro-rata split.
 - can be set to 0 to stop routing funds to that child
 - updates stream weights immediately
 
-### Stake exposure (risk + rewards)
+### Stake exposure (risk)
 
 When you stake into a budget (or mechanism), your principal becomes **escrowed** as exposure.
 
+- exposure locks risk — you cannot "escape" slashing by removing weight right before resolution
 - exposure is locked until that budget (or parent budget) resolves
-- you cannot “escape” slashing risk by removing weight right before resolution
-- exposure is locked **per Goal** (principal can’t exit the Goal until Goal resolution)
+- exposure is locked **per Goal** (principal can't exit the Goal until Goal resolution)
+- exposure alone does **not** accrue points — points require active weight
 
-> Decision: **conviction continues accruing while exposure is locked**, even if weight is set to 0.
+> Your exposure remains locked until budget resolution, but **points stop accruing when you set weight to 0**.
 
 ### Child staking semantics (default)
 
@@ -122,18 +123,20 @@ If an implementation allows additive child exposure, it should enforce an explic
 
 <StakeLifecycleDiagram />
 
-## Conviction
+## Points (stake-time)
 
-Conviction is the time-weighted accumulator used for rewards.
+Points are the time-weighted accumulator used for rewards.
 
 Baseline definition:
 
-- `conviction_u = ∫ exposure_u(t) dt`
+- `points_u,i = ∫ weight_u,i(t) dt`
 
 Intuition:
 
 - early underwriters earn more than late underwriters
 - persistent underwriters earn more than short-term underwriters
+- setting weight to 0 stops accrual (even though exposure stays locked)
+- points are frozen during dispute windows and only accrue when there is nonzero flow
 
 ## Reward pool (global, single pool)
 

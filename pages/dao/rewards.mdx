@@ -1,7 +1,11 @@
+---
+showOutline: false
+---
+
 import { ConvictionTimelineDiagram } from "../../components/ConvictionTimelineDiagram";
 import { ValueFlowsDiagram } from "../../components/ValueFlowsDiagram";
 
-# Rewards & conviction
+# Rewards
 
 Cobuild uses a **single global reward pool** per Goal.
 
@@ -9,122 +13,125 @@ Cobuild uses a **single global reward pool** per Goal.
 - rewards are **not** used for routing weights
 - rewards are gated: **only claimable if Goal succeeds**
 
-## What earns rewards?
+## Why stake-time
 
-Rewards only accrue from **successful budgets**.
+The allocator's job is judgment and commitment, not spending. They don't control how a budget spends — they control *which budgets to back and for how long.* The reward formula should measure the thing they actually contribute.
 
-- A budget succeeds → reward entitlements for underwriters are finalized
-- A budget can spend and still fail → **no rewards** from that budget
-- A budget fails (no invariant breach) → **no rewards** from that budget
-- invariant breach / slashing → separate handling (see resolution.md)
+The key distinction: **stake weight** controls routing (where funds flow), **stake exposure** is your locked collateral (what's at risk). You can set your weight to 0 to stop funding a budget, but your exposure stays locked until it resolves.
 
-## Conviction (time-weighted underwriting)
+Rewards accrue on **active weight**, not merely locked exposure:
 
-Baseline conviction per user is stake-seconds over exposure:
+`reward_u,i = ∫ weight_u,i(t) dt`
 
-- `conviction = ∫ exposure(t) dt`
+When you set weight to zero, you stop earning. When a budget fails, all its stakers earn zero — doesn't matter how long they were in.
 
-Decision:
-- conviction continues accruing **as long as exposure is locked**, even if routing weight is set to 0
-- conviction starts when exposure is created and stops at budget resolution
+### Why not exposure-time?
 
-This makes "exiting to dodge risk" impossible: you can stop funding, but you're still underwritten until resolution.
+Pure exposure-time creates a free-rider channel. You stake early, get exposure locked, then later set weight to 0 — stop actually funding the budget. Under exposure-time you keep earning rewards anyway as long as the budget eventually succeeds. Your capital is stuck but still earning the same reward, even after you stop backing the allocation.
+
+That directly contradicts the core story: if you're not actively directing funds somewhere, you shouldn't be paid for allocation you're not doing. Stake-time fixes this with one rule: **rewards accrue only while you're actively backing the budget.**
+
+This preserves anti-sniping (late arrivals get less time in the integral) while also rewarding the ongoing attention and judgment that makes continuous streaming useful.
+
+### When rewards accrue
+
+Rewards accrue only while:
+- your weight is nonzero on the budget
+- the budget is eligible and receiving a nonzero stream
+- no success/failure assertion is pending (frozen during dispute windows)
+
+The first rule means passive capital earns nothing. The second prevents farming rewards on capped or paused budgets. The third prevents inflating rewards by extending disputes.
 
 <ConvictionTimelineDiagram />
 
-## How the 20% pool is distributed
+## How the reward pool is distributed
 
 <ValueFlowsDiagram />
 
-To keep a single global pool while still rewarding "capital secured" and "time at risk", this design uses **Reward Points**.
+### Step 1: At budget success, compute reward weight per staker
 
-### Step 1: At budget success, compute budget “contribution weight”
-When budget `i` succeeds, record:
+When budget `i` succeeds, each staker `u` gets:
 
-- `spent_i`: net amount paid out by the budget (recommended definition below)
-- optional `lifetimeSpendCap_i` (aka `budgetCap`) if provided
+- `reward_u,i = ∫ weight_u,i(t) dt` (stake-days on that budget)
 
-Define the budget weight `W_i`:
+If a budget fails, all its stakers earn **zero rewards**.
 
-- **Baseline (always valid):**
-  - `W_i = spent_i`
+### Step 2: Global claim at Goal success
 
-- **Optional efficiency-weighting (only if lifetimeSpendCap is defined & enforced):**
-  - `efficiency_i = clamp(1 - spent_i / lifetimeSpendCap_i, 0, 1)`
-  - `W_i = spent_i * (ε + efficiency_i)`
-  - `ε` is a small constant so “successful at cap” still counts (e.g. `0.1`)
-
-If you don’t want efficiency games, use the baseline `W_i = spent_i`.
-
-### Step 2: Allocate `W_i` reward points to underwriters by conviction
-Inside budget `i`, each underwriter `u` has conviction:
-
-- `conviction_u,i` computed over the budget and its child mechanisms
-  - (child-level staking only counts if the user is also a budget underwriter)
-
-Compute conviction share:
-- `share_u,i = conviction_u,i / Σ conviction_*,i`
-
-Mint / assign reward points:
-- `points_u,i = W_i * share_u,i`
-
-### Step 3: Global claim at Goal success
-Let:
-- `P_total = Σ points_u,i` across all successful budgets
+- `R_total = Σ reward_u,i` across all successful budgets
 - `RewardPool = balance(RewardEscrow)` (20% of inflows)
 
-At Goal success, each point redeems for:
-- `rewardPerPoint = RewardPool / P_total`
+At Goal success, each unit redeems for:
+- `rewardPerUnit = RewardPool / R_total`
 
-User claim amount:
-- `claim_u = (Σ_i points_u,i) * rewardPerPoint`
+User claim:
+- `claim_u = (Σ_i reward_u,i) * rewardPerUnit`
 
-## Recommended definition of `spent`
-To align incentives with “don’t waste streamed funds”:
+## Concrete example
 
-- `spent` SHOULD mean: **net payouts** executed by the budget to recipients / mechanisms
-- `spent` SHOULD NOT count funds later returned upward
-- `spent` SHOULD be auditable (onchain transfers / accounting)
+Three budgets under a Goal. Reward pool is $200K.
 
-## Direct deposit policy (must be explicit)
-If direct deposits to budgets are allowed, define how they interact with rewards. Recommended default:
+**Budget A** succeeds (100 day execution):
+- Alice: staked 10K, weight active for all 100 days
+  - Reward weight: `10,000 × 100 = 1,000,000`
+- Bob: staked 5K, weight active for 80 days, then set to zero for last 20 (he got nervous)
+  - Reward weight: `5,000 × 80 = 400,000`
 
-- direct deposits **count toward balances** (activation threshold / runway cap)
-- direct deposits **do not** increase `RewardEscrow` (only Goal inflows do)
-- direct deposits **do not** increase `spent` for reward weighting unless routed through the Goal
+**Budget B** succeeds (50 day execution):
+- Carol: staked 20K, weight active all 50 days
+  - Reward weight: `20,000 × 50 = 1,000,000`
 
-This avoids accidental reward dilution or bypassing the reward skim.
+**Budget C** fails. Dave staked 15K for 90 days. **Zero rewards.**
 
-**Tradeoff note:** using `spent` as the weight is simple and objective, but it can bias toward “spend more.” The design relies on success gating and budget invariants to keep “spent” aligned with outcomes. If this feels too permissive, consider alternative weights (see below).
+Total reward weight: `2,400,000`
 
-## Alternative reward weights (optional)
-If you want rewards to track **liability underwritten** rather than spend, use one of:
+- Alice earns: `$83,333`
+- Bob earns: `$33,333`
+- Carol earns: `$83,333`
 
-- **Capped spend:** `W_i = min(spent_i, lifetimeSpendCap_i)`
-- **Concave spend:** `W_i = sqrt(spent_i)` (reduces burn farming)
-- **Insured exposure-time:** `W_i = ∫ E_i(t) dt` where `E_i(t)` is capped by runway/lifetime caps
+Note what happens to Bob: he was locked for all 100 days (exposure), but only actively backing the budget for 80 days (weight). He earns less than if he'd kept his weight active. Under pure exposure-time, he'd earn nearly the same as someone who stayed committed. Under stake-time, the system pays you for the thing it actually needs you to do: **point capital at the right things and keep it pointed there.**
 
-## Tokenized reward claims (optional but recommended)
+## What this rewards and what it doesn't
 
-Reward points can be implemented as:
-1) **Internal accounting** (a ledger), or
-2) A transferable “claim token” (ERC20-style) per Goal
+**It rewards:** committing capital early, staying actively committed, and picking budgets that succeed.
 
-### Why tokenization helps
-Because rewards are gated until Goal success, tokenized claims let underwriters:
+**It doesn't reward:** passive lockup, how much money flowed through the budget, how much was spent, or how big the budget was.
+
+## Common objections
+
+**"What if a budget barely spends anything but technically succeeds?"** This is where **success condition design** becomes critical. If the success condition is meaningful — "ship this feature and it has 1000 users" or "produce this research output and it passes peer review" — then a budget that "barely spends" but succeeds is a great outcome. The allocators correctly identified something that could succeed without massive resources. That's *good judgment*. The failure mode is if success conditions are too easy to satisfy — but that's a success condition quality problem, not a reward formula problem.
+
+**"Can't you just diversify across every budget?"** Capital is finite and locked. Staking 10K on Budget A means that 10K isn't available for Budget B unless A resolves first. Over-diversification means thinner stakes everywhere — less influence on routing, less stake-time per budget. You're forced to make actual bets.
+
+**"Can easy budgets soak up reward share?"** If a mostly-irrelevant budget attracts lots of stake-time and succeeds, it takes a share of the reward pool. The goal-success gate mitigates this but doesn't eliminate it. If this becomes a problem, tightening `maxRatePerStakeUnit` helps — to earn rewards at scale you must also be enabling funds to flow at scale, because weight is literally collateralizing flow.
+
+## The deeper point
+
+The reward formula is deliberately dumb. It just counts stake-days on successful budgets. The entire quality signal lives in two places:
+
+1. **The success condition** — is this budget measuring something that actually matters?
+2. **The goal-success gate** — did all this budget-level activity actually add up to the goal being achieved?
+
+When you're tuning the system, you're tuning success conditions and goal design — which is where the real judgment lives — instead of tuning reward formulas and spend incentives.
+
+## Tokenized reward claims (optional)
+
+Reward entitlements can be implemented as transferable claim tokens (ERC20-style) per Goal.
+
+Because rewards are gated until Goal success, tokenized claims let stakers:
 - sell future upside for liquidity now
 - exit exposure to time risk without breaking alignment
 
-**Economic meaning:** a reward point token is a claim on the reward pool **conditional on Goal success** (i.e., a binary-outcome claim).
+A reward claim token is a claim on the reward pool **conditional on Goal success** — a binary-outcome claim.
 
-### Suggested design
-- after budget success, mint transferable `RewardPointToken` to underwriters equal to `points_u,i`
-- redeemable only if the Goal succeeds
-- worthless if the Goal expires without success (see resolution.md)
+## What if a budget hasn't resolved when the Goal succeeds?
 
-## What if the Goal fails or expires?
-Default behavior (see resolution.md):
+If the Goal succeeds but Budget D is still in execution — it hasn't succeeded or failed yet — stakers on Budget D earn **zero rewards** for that budget. Only budgets that have successfully resolved before (or at) Goal success generate reward entitlements. Unresolved budgets are treated the same as failed budgets for reward purposes.
 
-- reward points become non-redeemable (0)
+This means timing matters: a budget that's on track but resolves *after* the Goal deadline contributes nothing to its stakers' rewards. Stakers are incentivized to back budgets that will resolve within the Goal's timeframe.
+
+## What if the Goal fails?
+
+- reward claims become non-redeemable (zero value)
 - staker principal becomes withdrawable at Goal resolution
-- reward escrow follows the Goal’s treasury disposition policy
+- reward escrow follows the Goal's treasury disposition policy (see [resolution](/dao/resolution))

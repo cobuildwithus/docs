@@ -35,14 +35,15 @@ At every node, outgoing funds are streamed to children in proportion to **instan
 - If a child has no stake (or is below a threshold), it gets **0** stream
 - Weights update immediately when stake weight changes
 
-### 2) Rewards are time-weighted (conviction), not used for routing
+### 2) Rewards accrue on active stake-time, not used for routing
 
 Routing weights come from _instant stake share_.
 
-Staker rewards are computed from **conviction** (time‑weighted stake, e.g. stake‑seconds), which:
+Staker rewards are computed from **stake-time** (time‑weighted active routing), which:
 
 - rewards early + persistent underwriters
-- reduces last‑minute “sniping”
+- reduces last‑minute "sniping"
+- stops accruing when weight is set to 0
 - does **not** affect stream weights
 
 ### 3) Rewards are gated by goal success
